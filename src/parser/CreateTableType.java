@@ -51,8 +51,7 @@ public class CreateTableType extends ParserTypes {
 	}
 
 	@Override
-	public
-	String action(Database database) {
+	public String action(Database database) {
 		database.addTables(tableName, new DBTable(this));
 		return "TABLE CREATED";
 	}
