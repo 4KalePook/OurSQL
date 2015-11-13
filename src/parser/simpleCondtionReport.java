@@ -88,7 +88,7 @@ public class simpleCondtionReport {
 		while(input.charAt(i)==' ')
 			i++;
 		int j = input.length();
-		while(input.charAt(j-1)==' ')
+		while(input.charAt(j-1)==' ' || input.charAt(j-1)==';')
 			j--;
 		if(j<i)
 			{System.out.println("(Err)Empty string to clean!");return "";}

@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import dbTypes.DBTypes;
+import dbTypes.INT;
+import dbTypes.VARCHAR;
+import parser.ConditionCalc;
 import parser.CreateTableType;
 
 public class DBTable {
@@ -58,7 +61,8 @@ public class DBTable {
 	public List<DBObject> selectRows(String whereClause){
 		List<DBObject> result = new LinkedList<DBObject>();
 		for(DBObject row : tableObjects){	//TODO make sure this is the correct order for the result
-			if(/** misgar condition **/true){   //TODO
+			ConditionCalc calc=new ConditionCalc(row);
+			if(calc.calculate(whereClause)){   //TODO
 				result.add(row);
 			}
 		}
@@ -68,7 +72,15 @@ public class DBTable {
 	public void update(String columnName,String whereClause,String valueClause){
 		List<DBObject> rows= selectRows(whereClause);
 		for(DBObject row: rows){
-			DBTypes value = /** misgar value **/null; //TODO
+			ConditionCalc calc=new ConditionCalc(row);
+			DBTypes value;
+			if(row.getField(columnName).getClass().equals(VARCHAR.class)){  
+				value = new VARCHAR(calc.StrCompVal(valueClause)); // If it's string
+			}else if(row.getField(columnName).getClass().equals(INT.class)){ 
+				value = new INT(calc.IntCompVal(valueClause)); // if it's integer 
+			}else{
+				System.err.println("Undefined type");
+			}
 			row.insertField(columnName, value);
 		}
 	}

@@ -111,7 +111,7 @@ public class ConditionCalc {
 		return false;
 	}
 	
-	private  String StrCompVal(String str){
+	public  String StrCompVal(String str){
 		str = Clean(str);
 		if(str.charAt(0)== '"'){
 			int i = 1;
@@ -145,7 +145,7 @@ public class ConditionCalc {
 		return "";
 	}
 	
-	private long IntCompVal(String comp){
+	public long IntCompVal(String comp){
 		int i = 0;
 		int numb = 0;
 		while(i<comp.length()&& is_digit(comp.charAt(i))){
@@ -194,7 +194,7 @@ public class ConditionCalc {
 		if(i==input.length())
 			{System.out.println("(Err)Empty string to clean!");return "";}
 		int j = input.length();
-		while(input.charAt(j-1)==' ')
+		while(input.charAt(j-1)==' ' || input.charAt(j-1)==';' )
 			j--;
 			
 		

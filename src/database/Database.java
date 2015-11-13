@@ -38,7 +38,9 @@ public class Database {
 		DBTable table = tables.get(tableName);
 		List<DBObject> rows=table.selectRows(whereClause);
 		
-		/** Displaying the output **/
+		/*************************
+		 * Displaying the header *
+		 *************************/
 		boolean first = true;
 		for(String columnName: columnNames){
 			if(!first)
@@ -48,6 +50,9 @@ public class Database {
 		}
 		System.out.println();
 		
+		/*************************
+		 * Displaying the table  *
+		 *************************/
 		for(DBObject row: rows){
 			first = true;
 			for(String columnName: columnNames){
