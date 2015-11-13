@@ -54,10 +54,7 @@ public class UpdateType extends ParserTypes {
 		}else{
 			whereClause = rest.substring(valueEnd+"WHERE".length(), end);  //where clause
 		}
-		System.err.println(rest+"\n" + valueBegin + " " + valueEnd + " " + end);
-
-		System.err.println(stringValue + ";");
-		System.err.println(whereClause + ";");
+	
 		scanner.close();
 	}
 

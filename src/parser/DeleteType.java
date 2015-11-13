@@ -36,7 +36,7 @@ public class DeleteType extends ParserTypes {
 			int end = rest.indexOf(";");
 			if(end==-1)
 				end=rest.length();
-			whereClause = rest.substring(begin+"WHERE".length(), end);  //where clause
+			whereClause = rest.substring(begin, end);  //where clause
 		}else{	
 			whereClause="TRUE";
 		}
@@ -45,6 +45,8 @@ public class DeleteType extends ParserTypes {
 
 	@Override
 	public String action(Database database) {
+		System.err.println(whereClause);
+
 		database.deleteFrom(tableName, whereClause);
 		return null;
 	}
