@@ -26,7 +26,6 @@ public class Database {
 	}
 	
 	public void update(String tableName, String columnName, String valueClause, String whereClause  ){
-		//TODO use misgar as value and whereClause parser for every table row (stupid... but otherwise we need function tensors)
 		tables.get(tableName).update(columnName,valueClause,whereClause);
 	}
 	
@@ -35,7 +34,31 @@ public class Database {
 	}
 	
 	public void selectFrom(String tableName,List<String> columnNames, String whereClause  ){
-		List<DBObject> rows=tables.get(tableName).selectRows(whereClause);
+		
+		DBTable table = tables.get(tableName);
+		List<DBObject> rows=table.selectRows(whereClause);
+		
+		/** Displaying the output **/
+		boolean first = true;
+		for(String columnName: columnNames){
+			if(!first)
+				System.out.print(',');
+			System.out.print(columnName);
+			first=false;
+		}
+		System.out.println();
+		
+		for(DBObject row: rows){
+			first = true;
+			for(String columnName: columnNames){
+				DBTypes value = row.getField(columnName);
+				if(!first)
+					System.out.print(',');
+				System.out.print(value.getValue().toString());
+				first=false;
+			}
+			System.out.println();
+		}
 		
 	}
 	

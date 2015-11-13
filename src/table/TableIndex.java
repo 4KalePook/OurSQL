@@ -1,5 +1,6 @@
 package table;
 
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
@@ -29,5 +30,8 @@ public class TableIndex<T> {
 	
 	public Set<Map.Entry<T, DBObject>> getSegment(T beg, boolean begInc, T end, boolean endInc) {
 		return index.tailMap(beg, begInc).headMap(end, endInc).entrySet();
+	}
+	public void remove(T key){
+		index.remove(key);
 	}
 }
