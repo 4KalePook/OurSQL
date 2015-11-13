@@ -31,7 +31,7 @@ public class SelectType extends ParserTypes {
 		scanner.next(); // select
 		columnNames.clear();
 		String token=scanner.next();
-		while(token != "FROM"){
+		while(!token.equals("FROM")){
 			columnNames.add(token);
 			token=scanner.next();
 		}
@@ -43,7 +43,7 @@ public class SelectType extends ParserTypes {
 			int end = rest.indexOf(";");
 			if(end==-1)
 				end=rest.length();
-			whereClause = rest.substring(begin+"WHERE".length(), end);  //where clause
+			whereClause = rest.substring(begin, end);  //where clause
 		}else{	
 			whereClause="TRUE";
 		}
