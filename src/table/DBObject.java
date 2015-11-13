@@ -21,7 +21,7 @@ public class DBObject {
 	
 	public void insertField(String fieldName, DBTypes value){
 		//TODO: maybe change db schema!
-		if(dataSet.containsKey(fieldName))
+		if(!dataSet.containsKey(fieldName))
 			dataSet.put(fieldName, value);
 	}
 	
