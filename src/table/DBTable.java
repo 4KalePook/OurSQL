@@ -47,4 +47,7 @@ public class DBTable {
 	public List<DBTypes> getColumnTypes(){
 		return createTable.getTypes();
 	}
+	
+	
+	
 }
