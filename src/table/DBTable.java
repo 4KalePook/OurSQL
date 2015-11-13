@@ -32,7 +32,7 @@ public class DBTable {
 	}
 	
 	public void addIndex(String indexName, String columnName) {
-		indices.put(columnName, new TableIndex<>());
+		indices.put(columnName, new TableIndex<DBTypes>());
 		TableIndex<DBTypes> index = indices.get(columnName);
 		for(DBObject obj: tableObjects)
 			index.insert(obj.getField(columnName), obj);
