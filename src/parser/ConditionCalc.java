@@ -67,7 +67,7 @@ public class ConditionCalc {
 		String ColName = tuple.substring(0,i);
 		int type = getType(ColName);
 		String sub = Clean(tuple.substring(i,tuple.length()));
-		System.err.println(sub);
+		//System.err.println(sub);
 		if(type == 0){
 			String value = getStrValue(ColName);
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
@@ -114,7 +114,7 @@ public class ConditionCalc {
 	
 	public  String StrCompVal(String str){
 		str = Clean(str);
-		System.err.println(str+"||\n");
+	//	System.err.println(str+"||\n");
 		if(str.charAt(0)== '"'){
 			int i = 1;
 			while(str.charAt(i)!='"')
@@ -123,11 +123,11 @@ public class ConditionCalc {
 				return str.substring(1, i);
 			String sub1 = str.substring(1, i);
 			String sub2 = str.substring(i+1, str.length());
-			System.err.println(sub1+","+sub2+"|\n");
+	//		System.err.println(sub1+","+sub2+"|\n");
 			return InStrCompVal(sub1, sub2);
 		}
 		// if we reach this point this means the (int)compare starts with a field
-		System.err.println(str+"||\n");
+	//	System.err.println(str+"||\n");
 		int i = 0;
 		while(i<str.length()&& (is_digit(str.charAt(i))||is_letter(str.charAt(i))))
 			i++;
