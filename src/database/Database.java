@@ -24,11 +24,6 @@ public class Database {
 		tables.get(tableName).addIndex(indexName, columnName);
 	}
 	
-<<<<<<< HEAD
-	public void insert(String tableName ,List<Object> values){
-		//TODO
-	}
-	
 	public void update(String tableName, String columnName, String valueClause, String whereClause  ){
 		//TODO use misgar as value and whereClause parser for every table row (stupid... but otherwise we need function tensors)
 	}
@@ -41,11 +36,7 @@ public class Database {
 		//TODO 
 	}
 	
-	public DBTable getTable(String tableName){
-		return (DBTable)tables.get(tableName);	
-=======
 	public void insert(String tableName, List<DBTypes> values){
 		tables.get(tableName).insertRow(values);
->>>>>>> 1feb73cb1e6a1d456c9e721297ed98be5c1bdd98
 	}
 }
