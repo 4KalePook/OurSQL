@@ -20,6 +20,7 @@ public class DBTable {
 	public DBTable(CreateTableType createTable) {
 		tableObjects = new LinkedList<>();
 		this.createTable = createTable;
+		this.indices = new HashMap<String, TableIndex<DBTypes> >(); 
 		
 		schema=new HashMap<String, DBTypes>();
 		for(String columnName : createTable.getSchema().keySet()){
