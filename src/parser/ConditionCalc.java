@@ -63,23 +63,24 @@ public class ConditionCalc {
 		int i=0;
 		while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
 			i++;
+		//System.err.println(tuple+"||\n");
 		String ColName = tuple.substring(0,i);
 		int type = getType(ColName);
 		String sub = Clean(tuple.substring(i,tuple.length()));
+		System.err.println(sub);
 		if(type == 0){
 			String value = getStrValue(ColName);
-			int compareFrom2 = value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) ;
-			int compareFrom1 = value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) ;
-			if(sub.startsWith("<=") || sub.startsWith("=<") )
-				return compareFrom2 <= 0;
+			if(sub.startsWith("<=") || sub.startsWith("=<") ){
+				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) <= 0;
+			}
 			if(sub.startsWith(">=") || sub.startsWith("=>") )
-				return compareFrom2 >= 0;
+				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) >= 0;
 			if(sub.startsWith(">") )
-				return compareFrom1 <  0;				
+				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) <  0;				
 			if(sub.startsWith(">") )
-				return compareFrom1 >  0;
+				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) >  0;
 			if(sub.startsWith("="))
-				return compareFrom1 == 0;
+				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) == 0;
 		}
 		if(type == 1){
 			long value = getIntValue(ColName);
@@ -113,6 +114,7 @@ public class ConditionCalc {
 	
 	public  String StrCompVal(String str){
 		str = Clean(str);
+		System.err.println(str+"||\n");
 		if(str.charAt(0)== '"'){
 			int i = 1;
 			while(str.charAt(i)!='"')
@@ -121,9 +123,11 @@ public class ConditionCalc {
 				return str.substring(1, i);
 			String sub1 = str.substring(1, i);
 			String sub2 = str.substring(i+1, str.length());
+			System.err.println(sub1+","+sub2+"|\n");
 			return InStrCompVal(sub1, sub2);
 		}
 		// if we reach this point this means the (int)compare starts with a field
+		System.err.println(str+"||\n");
 		int i = 0;
 		while(i<str.length()&& (is_digit(str.charAt(i))||is_letter(str.charAt(i))))
 			i++;
@@ -218,6 +222,8 @@ public class ConditionCalc {
 		return ((long)myrow.get(a).getValue());
 	}
 	private  String getStrValue(String a){
+		//if(!myrow.containsKey(a))
+			//System.out.println(a);
 		return (String)myrow.get(a).getValue();
 	}
 	private  int getType(String a){
@@ -225,7 +231,7 @@ public class ConditionCalc {
 		if(!myrow.containsKey(a))
 			System.err.println(a+" isn't in hash map");
 		if(myrow.get(a).getClass().equals(VARCHAR.class))
-				return 0;
+			return 0;
 		else
 			return 1;
 			
