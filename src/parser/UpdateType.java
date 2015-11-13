@@ -36,7 +36,7 @@ public class UpdateType extends ParserTypes {
 		scanner.next(); // set
 		columnName = scanner.next();  //columnName
 		String rest=scanner.nextLine();
-		int valueBegin=rest.indexOf("=");
+		int valueBegin=0;
 		int valueEnd=rest.indexOf("WHERE");
 		int end = rest.indexOf(";");
 		if(end==-1)
@@ -54,6 +54,8 @@ public class UpdateType extends ParserTypes {
 		}else{
 			whereClause = rest.substring(valueEnd+"WHERE".length(), end);  //where clause
 		}
+
+		System.err.println(stringValue+ " " + whereClause);
 		scanner.close();
 	}
 
