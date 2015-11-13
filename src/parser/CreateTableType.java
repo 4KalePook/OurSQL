@@ -23,6 +23,10 @@ public class CreateTableType extends ParserTypes {
 	public Vector<DBTypes> getTypes() {
 		return types;
 	}
+	
+	public Vector<String> getNames() {
+		return names;
+	}
 
 	public HashMap<String, Integer> getSchema() {
 		return schema;

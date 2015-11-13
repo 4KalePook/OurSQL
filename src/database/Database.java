@@ -24,7 +24,7 @@ public class Database {
 		tables.get(tableName).addIndex(indexName, columnName);
 	}
 	
-	public void insert(String tabelName, List<DBTypes> values){
-		//TODO
+	public void insert(String tableName, List<DBTypes> values){
+		tables.get(tableName).insertRow(values);
 	}
 }

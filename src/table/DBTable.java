@@ -28,11 +28,19 @@ public class DBTable {
 			index.insert(obj.getField(columnName), obj);
 	}
 	
+	public void insertRow(List<DBTypes> values) {
+		// TODO: check types before adding
+		DBObject row = new DBObject();
+		for(int i=0; i<createTable.getNames().size(); i++)
+			row.insertField(createTable.getNames().get(i), values.get(i));
+		insertRow(row);
+	}
+	
 //	public void makeSchema(HashMap<String, DBTypes> schema){
 //		this.schema = schema;
 //	}
 	
-	public void DBTableInsertRow(DBObject row)
+	public void insertRow(DBObject row)
 	{ 
 		tableObjects.add(row);
 		for(String indexName: indices.keySet()) {
