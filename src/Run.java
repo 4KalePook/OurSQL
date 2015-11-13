@@ -17,7 +17,10 @@ public class Run {
 //		System.out.println(CommandTypes.valueOf("CREATE_TABLE").getCommandText());
 		while(true)
 		{
-			parsedCommand = parser.parseCommand(scanner.nextLine());
+			String line =scanner.nextLine();
+			if(line=="")
+				continue;
+			parsedCommand = parser.parseCommand(line);
 			String result = parsedCommand.action(database);
 			if(result!=null)
 				System.out.println(result);
