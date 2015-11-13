@@ -20,14 +20,15 @@ public class DBTable {
 	public DBTable(CreateTableType createTable) {
 		tableObjects = new LinkedList<>();
 		this.createTable = createTable;
+		this.indices = new HashMap<String, TableIndex<DBTypes> >(); 
 		
 		schema=new HashMap<String, DBTypes>();
 		for(String columnName : createTable.getSchema().keySet()){
 			schema.put(columnName,
 					createTable.getTypes().elementAt(createTable.getSchema().get(columnName)));
 		}
-		System.out.println(createTable.getSchema());
-		System.out.println(createTable.getTableName());
+		System.err.println(createTable.getSchema());
+		System.err.println(createTable.getTableName());
 	}
 	
 	public void addIndex(String indexName, String columnName) {
