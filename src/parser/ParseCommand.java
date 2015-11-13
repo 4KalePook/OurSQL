@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 public class ParseCommand {
 	
-	static Pattern DELIMS = Pattern.compile("[,();\\s]+"); 
+	static Pattern DELIMS = Pattern.compile("[,();\\=\\s]+"); 
 	
 	public ParserTypes parseCommand(String command){
 		Scanner scanner = new Scanner(command);
