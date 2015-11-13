@@ -70,7 +70,7 @@ public class DBTable {
 		return result;
 	}
 	
-	public void update(String columnName,String whereClause,String valueClause){
+	public void update(String columnName,String valueClause,String whereClause){
 		List<DBObject> rows= selectRows(whereClause);
 		for(DBObject row: rows){
 			ConditionCalc calc=new ConditionCalc(row);
