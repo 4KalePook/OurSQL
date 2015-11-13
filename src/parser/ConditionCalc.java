@@ -64,7 +64,7 @@ public class ConditionCalc {
 		while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
 			i++;
 		String ColName = tuple.substring(0,i);
-		int type = getType(ColName)=="String"?0:1;
+		int type = getType(ColName);
 		String sub = Clean(tuple.substring(i,tuple.length()));
 		if(type == 0){
 			String value = getStrValue(ColName);
@@ -82,7 +82,7 @@ public class ConditionCalc {
 				return compareFrom1 == 0;
 		}
 		if(type == 1){
-			int value = getIntValue(ColName);
+			long value = getIntValue(ColName);
 			sub = Clean(sub);
 			if(sub.startsWith("<=") || sub.startsWith("=<"))
 				return (value <= IntCompVal(sub.substring(2, sub.length())));
@@ -145,7 +145,7 @@ public class ConditionCalc {
 		return "";
 	}
 	
-	private  int IntCompVal(String comp){
+	private long IntCompVal(String comp){
 		int i = 0;
 		int numb = 0;
 		while(i<comp.length()&& is_digit(comp.charAt(i))){
@@ -161,7 +161,7 @@ public class ConditionCalc {
 		// i == 0
 		while(i<comp.length()&& (is_digit(comp.charAt(i))||is_letter(comp.charAt(i))))
 			i++;
-		int value = getIntValue(comp.substring(0,i));
+		long value = getIntValue(comp.substring(0,i));
 		if(i==comp.length())
 			return value;
 		if(i!=0)
@@ -171,7 +171,7 @@ public class ConditionCalc {
 		return 0;
 	}
 	
-	private  int inIntCompVal(int numb, String incomp){
+	private long inIntCompVal(long numb, String incomp){
 		incomp = Clean(incomp);
 		if(incomp.startsWith("+"))
 			return numb+IntCompVal(incomp.substring(1,incomp.length()));
@@ -213,20 +213,20 @@ public class ConditionCalc {
 			return true;
 		return false;
 	}
-	private  int getIntValue(String a){
-		return ((Integer)myrow.get(a).getValue()).intValue();
+	private  long getIntValue(String a){
+		return ((long)myrow.get(a).getValue());
 	}
 	private  String getStrValue(String a){
 		return (String)myrow.get(a).getValue();
 	}
-	private  String getType(String a){
+	private  int getType(String a){
 		//TODO: How?
 		if(!myrow.containsKey(a))
 			System.out.println(a+" isn't in hash map");
 		if(myrow.get(a).getClass().equals(VARCHAR.class))
-				return "STRING";
+				return 0;
 		else
-			return "INT";
+			return 1;
 			
 		
 		//return "INT";
