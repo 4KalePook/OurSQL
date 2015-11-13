@@ -1,5 +1,8 @@
 package dbTypes;
 
+import java.util.Scanner;
+
+
 public class INT implements DBTypes{
 	private Long value;
 	
@@ -11,6 +14,26 @@ public class INT implements DBTypes{
 	}
 	
 	public Long getValue(){
+		return value;
+	}
+	public String toStr(){
+		if(value==null)
+			return "NULL";
+		return String.format("%d",value.longValue());
+	}
+	
+	public Object toValue(String string){
+		if(string == "NULL")
+			return null;
+		
+		Long value;
+		try{
+				Scanner scanner= new Scanner(string);
+				value = scanner.nextLong();
+				scanner.close();
+		}catch(Exception e){
+			return null;
+		}
 		return value;
 	}
 }
