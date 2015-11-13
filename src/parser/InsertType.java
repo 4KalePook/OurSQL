@@ -51,14 +51,18 @@ public class InsertType extends ParserTypes {
 		scanner.next(); // values
 		
 		String rest=scanner.nextLine();  // rest of line
-		Matcher matcher = Pattern.compile("[(\"[^\"]*\")(\\d+)(NULL)]").matcher(rest); // value patterns
+		Matcher matcher = Pattern.compile("(\"[^\"]*\")|(\\d+)|(NULL)").matcher(rest); // value patterns
 		stringValues.clear();
 		int index=0;
 		while(matcher.find(index)){
 			String value = matcher.group();
 			stringValues.add(value);
+			if(index==matcher.end())
+				break;
 			index=matcher.end();
 		}
+
+		System.err.println(stringValues);
 		scanner.close();
 	}
 

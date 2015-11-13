@@ -18,7 +18,7 @@ public class Run {
 		while(true)
 		{
 			String line =scanner.nextLine();
-			if(line=="")
+			if(line.equals(""))
 				continue;
 			parsedCommand = parser.parseCommand(line);
 			String result = parsedCommand.action(database);
