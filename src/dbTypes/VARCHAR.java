@@ -30,6 +30,10 @@ public class VARCHAR implements DBTypes{
 		}
 		return new VARCHAR(string.substring(begin+1,end));
 	}
+	@Override
+	public int compareTo(DBTypes o) {
+		return getValue().compareTo((String)o.getValue());
+	}
 }
 
 

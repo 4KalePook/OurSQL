@@ -36,4 +36,9 @@ public class INT implements DBTypes{
 		}
 		return new INT(value);
 	}
+	@Override
+	public int compareTo(DBTypes o) {
+		return getValue().compareTo((Long)o.getValue());
+	}
+	
 }
