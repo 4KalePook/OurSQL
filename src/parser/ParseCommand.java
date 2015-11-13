@@ -1,10 +1,11 @@
 package parser;
 
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class ParseCommand {
 	
-	static String DELIMS = "[,();\\s]+"; 
+	static Pattern DELIMS = Pattern.compile("[,();\\s]+"); 
 	
 	public ParserTypes parseCommand(String command){
 		Scanner scanner = new Scanner(command);

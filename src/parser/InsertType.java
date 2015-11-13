@@ -4,6 +4,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+
 
 import database.Database;
 import dbTypes.DBTypes;
@@ -46,10 +50,14 @@ public class InsertType extends ParserTypes {
 	
 		scanner.next(); // values
 		
+		String rest=scanner.nextLine();  // rest of line
+		Matcher matcher = Pattern.compile("[(\"[^\"]*\")(\\d+)(NULL)]").matcher(rest); // value patterns
 		stringValues.clear();
-		while(scanner.hasNext()){
-			String value = scanner.next();
+		int index=0;
+		while(matcher.find(index)){
+			String value = matcher.group();
 			stringValues.add(value);
+			index=matcher.end();
 		}
 		scanner.close();
 	}
