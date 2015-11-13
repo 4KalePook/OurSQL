@@ -72,6 +72,7 @@ public class DBTable {
 	
 	public void update(String columnName,String valueClause,String whereClause){
 		List<DBObject> rows= selectRows(whereClause);
+		System.err.println(rows.size() + "!@#$");
 		for(DBObject row: rows){
 			ConditionCalc calc=new ConditionCalc(row);
 			DBTypes value=null;

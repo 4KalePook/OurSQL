@@ -37,7 +37,10 @@ public class Database {
 		
 		DBTable table = tables.get(tableName);
 		List<DBObject> rows=table.selectRows(whereClause);
-		
+		if(rows.isEmpty()){
+			System.out.println("NO RESULTS");
+			return;
+		}
 		/*************************
 		 * Displaying the header *
 		 *************************/
