@@ -35,6 +35,8 @@ public class CreateTableType extends ParserTypes {
 	public CreateTableType() {
 		this.commandType = CommandTypes.CREATE_TABLE;
 		schema = new HashMap<>();
+		names = new Vector<String>();
+		types = new Vector<DBTypes>();
 	}
 	
 	@Override
@@ -43,6 +45,7 @@ public class CreateTableType extends ParserTypes {
 		scanner.useDelimiter(ParseCommand.DELIMS);
 		scanner.next(); // create
 		scanner.next(); // table
+		
 		tableName = scanner.next();
 		
 		while(scanner.hasNext()){
@@ -62,6 +65,7 @@ public class CreateTableType extends ParserTypes {
 			schema.put(key, names.size()-1);
 		}
 		scanner.close();
+		
 	}
 
 	@Override
