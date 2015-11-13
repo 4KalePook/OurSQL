@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import table.DBTable;
+import table.DBtable;
 
 public class Database {
 	HashMap<String, DBTable> tables;
@@ -14,11 +15,15 @@ public class Database {
 		tables.put(tableName, dbTable);
 	}
 
-	public void addIndex(String indexName, String tabelName, String columnName){
+	public void addIndex(String indexName, String tableName, String columnName){
 		//TODO
 	}
 	
-	public void insert(String tabelName ,List<Object> values){
+	public void insert(String tableName ,List<Object> values){
 		//TODO
+	}
+	
+	public DBTable getTable(String tableName){
+		return (DBTable)tables.get(tableName);	
 	}
 }
