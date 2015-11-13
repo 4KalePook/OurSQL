@@ -3,6 +3,7 @@ package database;
 import java.util.HashMap;
 import java.util.List;
 
+import dbTypes.DBTypes;
 import table.DBTable;
 
 public class Database {
@@ -10,15 +11,20 @@ public class Database {
 	public Database(){
 		tables = new HashMap<>();
 	}
+	
+	public DBTable getTable(String tableName){
+		return tables.get(tableName);
+	}
+	
 	public void addTables(String tableName, DBTable dbTable){
 		tables.put(tableName, dbTable);
 	}
 
-	public void addIndex(String indexName, String tabelName, String columnName){
-		//TODO
+	public void addIndex(String indexName, String tableName, String columnName){
+		tables.get(tableName).addIndex(indexName, columnName);
 	}
 	
-	public void insert(String tabelName ,List<Object> values){
+	public void insert(String tabelName, List<DBTypes> values){
 		//TODO
 	}
 }

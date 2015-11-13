@@ -1,5 +1,6 @@
 package table;
 import java.util.HashMap;
+import java.util.List;
 
 import dbTypes.DBTypes;
 
@@ -9,9 +10,9 @@ class DBObject {
 		this.dataSet = dataSet;
 	}
 	
-	public void insertRow(HashMap<String, DBTypes> dataSet){
+	public void insertRow(List<DBTypes> dataSet){
 		//TODO: call garbage COllector on this.dataSet?!
-		this.dataSet = dataSet;
+//		this.dataSet = dataSet;
 	}
 	
 	public void insertField(String fieldName, DBTypes value){

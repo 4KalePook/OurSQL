@@ -9,7 +9,8 @@ import parser.CreateTableType;
 
 public class DBTable {
 	LinkedList<DBObject> tableObjects;
-	HashMap<String, TableIndex> indices;
+	HashMap<String, TableIndex<DBTypes> > indices;
+	
 //	HashMap<String, DBTypes> schema; //HashMap<String, DBTypes> DBObject = new HashMap<String, DBTypes>(schema);
 	CreateTableType createTable;
 	
@@ -18,6 +19,13 @@ public class DBTable {
 		this.createTable = createTable;
 		System.out.println(createTable.getSchema());
 		System.out.println(createTable.getTableName());
+	}
+	
+	public void addIndex(String indexName, String columnName) {
+		indices.put(columnName, new TableIndex<>());
+		TableIndex<DBTypes> index = indices.get(columnName);
+		for(DBObject obj: tableObjects)
+			index.insert(obj.getField(columnName), obj);
 	}
 	
 //	public void makeSchema(HashMap<String, DBTypes> schema){
@@ -37,7 +45,6 @@ public class DBTable {
 		;
 	}
 	public List<DBTypes> getColumnTypes(){
-		//TODO
-		return null;
+		return createTable.getTypes();
 	}
 }

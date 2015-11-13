@@ -8,7 +8,7 @@ import java.util.TreeMap;
 
 import dbTypes.DBTypes;
 
-public class TableIndex<T extends DBTypes> {
+public class TableIndex<T> {
 	NavigableMap<T, DBObject> index;
 	
 	public TableIndex() {

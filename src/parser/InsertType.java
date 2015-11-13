@@ -15,14 +15,14 @@ public class InsertType extends ParserTypes {
 
 	String tableName;
 	List<String> stringValues;
-	List<Object> values;
+	List<DBTypes> values;
 	
 	public List<String> getStringValues() {
 		return stringValues;
 	}
 
 
-	public List<Object> getValues() {
+	public List<DBTypes> getValues() {
 		return values;
 	}
 
@@ -34,7 +34,7 @@ public class InsertType extends ParserTypes {
 
 	public InsertType() {
 		this.commandType = CommandTypes.INSERT_INTO;
-		values=new LinkedList<Object>();
+		values = new LinkedList<DBTypes>();
 		stringValues=new LinkedList<String>();
 	}
 	
@@ -57,8 +57,8 @@ public class InsertType extends ParserTypes {
 	@Override
 	public String action(Database database) {
 		values.clear();
-		DBTable tabel = database.getTable(tableName);
-		List<DBTypes> types = tabel.getColumnTypes();
+		DBTable table = database.getTable(tableName);
+		List<DBTypes> types = table.getColumnTypes();
 		Iterator<String> itStringValues = stringValues.iterator();
 		Iterator<DBTypes> itTypes = types.iterator();
 		while(itTypes.hasNext() && itStringValues.hasNext() ){
