@@ -13,7 +13,7 @@ public class ParseCommand {
 			{
 				ParserTypes parserType = null;
 				try {
-					Class c = commandType.getCommandClass();
+					Class<?> c = commandType.getCommandClass();
 					parserType = (ParserTypes) c.newInstance();
 					parserType.setCommand(command);
 					parserType.parse();

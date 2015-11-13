@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import table.DBTable;
-import table.DBtable;
 
 public class Database {
 	HashMap<String, DBTable> tables;
@@ -21,6 +20,18 @@ public class Database {
 	
 	public void insert(String tableName ,List<Object> values){
 		//TODO
+	}
+	
+	public void update(String tableName, String columnName, String valueClause, String whereClause  ){
+		//TODO use misgar as value and whereClause parser for every table row (stupid... but otherwise we need function tensors)
+	}
+	
+	public void deleteFrom(String tableName, String whereClause  ){
+		//TODO 
+	}
+	
+	public void selectFrom(String tableName,List<String> columnNames, String whereClause  ){
+		//TODO 
 	}
 	
 	public DBTable getTable(String tableName){

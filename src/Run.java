@@ -22,7 +22,8 @@ public class Run {
 		{
 			parsedCommand = parser.parseCommand(scanner.nextLine());
 			String result = parsedCommand.action(database);
-			System.out.println(result);
+			if(result!=null)
+				System.out.println(result);
 		}
 //		scanner.close();
 

@@ -1,12 +1,8 @@
 package parser;
 
-import java.util.HashMap;
 import java.util.Scanner;
 
 import database.Database;
-import dbTypes.DBEnumTypes;
-import dbTypes.DBTypes;
-import table.DBTable;
 
 public class CreateIndexType extends ParserTypes {
 

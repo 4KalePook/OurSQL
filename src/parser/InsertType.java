@@ -1,13 +1,11 @@
 package parser;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
 import database.Database;
-import dbTypes.DBEnumTypes;
 import dbTypes.DBTypes;
 import table.DBTable;
 
@@ -45,6 +43,8 @@ public class InsertType extends ParserTypes {
 		scanner.next(); // Insert
 		scanner.next(); // Into
 		tableName = scanner.next(); // tableName
+	
+		scanner.next(); // values
 		
 		stringValues.clear();
 		while(scanner.hasNext()){
