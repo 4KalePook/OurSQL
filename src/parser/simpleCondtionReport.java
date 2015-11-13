@@ -91,7 +91,7 @@ public class simpleCondtionReport {
 		while(input.charAt(j-1)==' ' || input.charAt(j-1)==';')
 			j--;
 		if(j<i)
-			{System.out.println("(Err)Empty string to clean!");return "";}
+			{System.err.println("(Err)Empty string to clean!");return "";}
 		
 		return input.substring(i,j);
 	}

@@ -27,8 +27,8 @@ public class DBTable {
 			schema.put(columnName,
 					createTable.getTypes().elementAt(createTable.getSchema().get(columnName)));
 		}
-		System.out.println(createTable.getSchema());
-		System.out.println(createTable.getTableName());
+		System.err.println(createTable.getSchema());
+		System.err.println(createTable.getTableName());
 	}
 	
 	public void addIndex(String indexName, String columnName) {
