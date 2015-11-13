@@ -36,7 +36,7 @@ public class UpdateType extends ParserTypes {
 		scanner.next(); // set
 		columnName = scanner.next();  //columnName
 		String rest=scanner.nextLine();
-		int valueBegin=0;
+		int valueBegin=rest.indexOf("=");
 		int valueEnd=rest.indexOf("WHERE");
 		int end = rest.indexOf(";");
 		if(end==-1)
