@@ -146,6 +146,7 @@ public class ConditionCalc {
 	}
 	
 	public long IntCompVal(String comp){
+		comp = Clean(comp);
 		int i = 0;
 		int numb = 0;
 		while(i<comp.length()&& is_digit(comp.charAt(i))){
