@@ -4,7 +4,7 @@ import java.util.List;
 
 import dbTypes.DBTypes;
 
-class DBObject {
+public class DBObject {
 	private HashMap<String, DBTypes> dataSet;
 	public DBObject(HashMap<String, DBTypes> dataSet) {
 		this.dataSet = dataSet;

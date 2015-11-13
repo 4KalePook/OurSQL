@@ -48,6 +48,19 @@ public class DBTable {
 		}
 	}
 	
+	public void update(){
+		//TODO
+	}
+	
+	public void delete(){
+		//TODO
+	}
+	
+	public List<DBObject> select(){
+		//TODO
+		return null;
+	}
+	
 	public void DBTableGet()
 	{
 		;
