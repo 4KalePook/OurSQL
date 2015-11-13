@@ -12,11 +12,11 @@ public class ParseCommand {
 			{
 				ParserTypes parserType = null;
 				try {
-					Class c = Class.forName(commandType.getCommandClass());
+					Class c = commandType.getCommandClass();
 					parserType = (ParserTypes) c.newInstance();
 					parserType.setCommand(command);
 					parserType.parse();
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				} catch (InstantiationException | IllegalAccessException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -27,5 +27,25 @@ public class ParseCommand {
 		}
 		scanner.close();
 		return null;
+	}
+	
+	static String cleanValue(String value) {
+		if( value.charAt(0) == ')' )
+			value = value.substring(1, value.length());
+		if( value.charAt(0) == '(' )
+			value = value.substring(1, value.length());
+		if( value.charAt(0) == ',' )
+			value = value.substring(1, value.length());
+		
+		if( value.charAt(value.length()-1) == '(' )
+			value = value.substring(0, value.length()-1);
+		if( value.charAt(value.length()-1) == ',' )
+			value = value.substring(0, value.length()-1);
+		if( value.charAt(value.length()-1) == ')' )
+			value = value.substring(0, value.length()-1);
+		if( value.charAt(value.length()-1) == ';' )
+			value = value.substring(0, value.length()-1);
+		
+		return value;
 	}
 }

@@ -8,6 +8,7 @@ import parser.CreateTableType;
 
 public class DBTable {
 	LinkedList<DBObject> tableObjects;
+	HashMap<String, TableIndex> indices;
 //	HashMap<String, DBTypes> schema; //HashMap<String, DBTypes> DBObject = new HashMap<String, DBTypes>(schema);
 	CreateTableType createTable;
 	
@@ -22,9 +23,12 @@ public class DBTable {
 //		this.schema = schema;
 //	}
 	
-	public void DBTableInsertRow(String key, String value)
+	public void DBTableInsertRow(DBObject row)
 	{ 
-		;
+		tableObjects.add(row);
+		for(String indexName: indices.keySet()) {
+			indices.get(indexName).insert(row.getField(indexName), row);
+		}
 	}
 	
 	public void DBTableGet()

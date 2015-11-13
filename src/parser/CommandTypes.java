@@ -1,11 +1,11 @@
 package parser;
 
 public enum CommandTypes{
-	CREATE_TABLE("CREATE TABLE", CreateTableType.class.getName()); //, CREATE_INDEX("CREATE INDEX"), INSERT_INTO("INSERT INTO"); //TODO: add other type
+	CREATE_TABLE("CREATE TABLE", CreateTableType.class); //, CREATE_INDEX("CREATE INDEX"), INSERT_INTO("INSERT INTO"); //TODO: add other type
 	
 	private String commandText;
-	private String commandClass;
-	private CommandTypes(String commandText, String commandClass){
+	private Class commandClass;
+	private CommandTypes(String commandText, Class commandClass){
 		this.commandText = commandText;
 		this.commandClass = commandClass;
 	}
@@ -13,7 +13,7 @@ public enum CommandTypes{
 	public String getCommandText(){
 		return commandText;
 	}
-	public String getCommandClass(){
+	public Class getCommandClass(){
 		return commandClass;
 	}
 }

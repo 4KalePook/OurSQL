@@ -29,9 +29,11 @@ public class CreateTableType extends ParserTypes {
 	@Override
 	public void parse() {
 		Scanner scanner = new Scanner(command);
+		scanner.useDelimiter("[,();\\s]+");
 		scanner.next(); // create
 		scanner.next(); // table
 		tableName = scanner.next();
+		System.out.println("name: " + tableName);
 		
 		while(scanner.hasNext()){
 			String key = scanner.next();
@@ -39,9 +41,9 @@ public class CreateTableType extends ParserTypes {
 			Class c;
 			DBTypes dbType = null;
 			try {
-				c = Class.forName(DBEnumTypes.valueOf(type).getTypeClass());
+				c = DBEnumTypes.valueOf(type).getTypeClass();
 				dbType = (DBTypes) c.newInstance();
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+			} catch (InstantiationException | IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
