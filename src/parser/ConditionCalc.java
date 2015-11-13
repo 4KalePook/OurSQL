@@ -45,7 +45,7 @@ public class ConditionCalc {
 			while(depth!=0){
 				j++;
 				if(j>=tuple.length())
-					{System.out.println("MisMatch Parenthesis\n <"+tuple+ ">");return false;}
+					{System.err.println("MisMatch Parenthesis\n <"+tuple+ ">");return false;}
 				if(tuple.charAt(j)=='(')
 					depth++;
 				if(tuple.charAt(j)==')')
@@ -96,7 +96,7 @@ public class ConditionCalc {
 				return (value == IntCompVal(sub.substring(1, sub.length())));
 		}
 		//if we reach this point this means the string isn't a standard tuple condition
-		System.out.println("(Err)Not a standard Tupple Condition\n <"+tuple+">");
+		System.err.println("(Err)Not a standard Tupple Condition\n <"+tuple+">");
 		return false;
 	}
 	
@@ -107,7 +107,7 @@ public class ConditionCalc {
 		if(intuple.startsWith("OR"))
 			return (A || calculate(intuple.substring(2,intuple.length())));
 		
-		System.out.println("(Err)Not a standard inner Tupple Condition:\n"+intuple);
+		System.err.println("(Err)Not a standard inner Tupple Condition:\n"+intuple);
 		return false;
 	}
 	
@@ -141,7 +141,7 @@ public class ConditionCalc {
 		if(str2.startsWith("+"))
 			return str1 + StrCompVal(str2.substring(1,str2.length()));
 		
-		System.out.println("(Err)Not a standard inner str comp :\n <"+str2+">");
+		System.err.println("(Err)Not a standard inner str comp :\n <"+str2+">");
 		return "";
 	}
 	
@@ -192,7 +192,7 @@ public class ConditionCalc {
 		while(i<input.length() && input.charAt(i)==' ')
 			i++;
 		if(i==input.length())
-			{System.out.println("(Err)Empty string to clean!");return "";}
+			{System.err.println("(Err)Empty string to clean!");return "";}
 		int j = input.length();
 		while(input.charAt(j-1)==' ' || input.charAt(j-1)==';' )
 			j--;
@@ -222,7 +222,7 @@ public class ConditionCalc {
 	private  int getType(String a){
 		//TODO: How?
 		if(!myrow.containsKey(a))
-			System.out.println(a+" isn't in hash map");
+			System.err.println(a+" isn't in hash map");
 		if(myrow.get(a).getClass().equals(VARCHAR.class))
 				return 0;
 		else
