@@ -29,7 +29,7 @@ public class CreateTableType extends ParserTypes {
 	@Override
 	public void parse() {
 		Scanner scanner = new Scanner(command);
-		scanner.useDelimiter("[,();\\s]+");
+		scanner.useDelimiter(ParseCommand.DELIMS);
 		scanner.next(); // create
 		scanner.next(); // table
 		tableName = scanner.next();

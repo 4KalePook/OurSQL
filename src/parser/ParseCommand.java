@@ -4,6 +4,7 @@ import java.util.Scanner;
 
 public class ParseCommand {
 	
+	static String DELIMS = "[,();\\s]+"; 
 	
 	public ParserTypes parseCommand(String command){
 		Scanner scanner = new Scanner(command);
@@ -29,23 +30,4 @@ public class ParseCommand {
 		return null;
 	}
 	
-	static String cleanValue(String value) {
-		if( value.charAt(0) == ')' )
-			value = value.substring(1, value.length());
-		if( value.charAt(0) == '(' )
-			value = value.substring(1, value.length());
-		if( value.charAt(0) == ',' )
-			value = value.substring(1, value.length());
-		
-		if( value.charAt(value.length()-1) == '(' )
-			value = value.substring(0, value.length()-1);
-		if( value.charAt(value.length()-1) == ',' )
-			value = value.substring(0, value.length()-1);
-		if( value.charAt(value.length()-1) == ')' )
-			value = value.substring(0, value.length()-1);
-		if( value.charAt(value.length()-1) == ';' )
-			value = value.substring(0, value.length()-1);
-		
-		return value;
-	}
 }
