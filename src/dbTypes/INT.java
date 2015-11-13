@@ -22,7 +22,7 @@ public class INT implements DBTypes{
 		return String.format("%d",value.longValue());
 	}
 	
-	public Object toValue(String string){
+	public DBTypes toValue(String string){
 		if(string == "NULL")
 			return null;
 		
@@ -34,6 +34,6 @@ public class INT implements DBTypes{
 		}catch(Exception e){
 			return null;
 		}
-		return value;
+		return new INT(value);
 	}
 }

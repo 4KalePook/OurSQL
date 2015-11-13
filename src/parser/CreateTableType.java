@@ -2,6 +2,7 @@ package parser;
 
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Vector;
 
 import database.Database;
 import dbTypes.DBEnumTypes;
@@ -11,13 +12,23 @@ import table.DBTable;
 public class CreateTableType extends ParserTypes {
 
 	String tableName;
-	HashMap<String, DBTypes> schema;
+	HashMap<String, Integer> schema;
+	Vector<String> names;
+	Vector<DBTypes> types;
 	
 	public String getTableName() {
 		return tableName;
 	}
+	
+	public Vector<DBTypes> getTypes() {
+		return types;
+	}
+	
+	public Vector<String> getNames() {
+		return names;
+	}
 
-	public HashMap<String, DBTypes> getSchema() {
+	public HashMap<String, Integer> getSchema() {
 		return schema;
 	}
 
@@ -46,7 +57,9 @@ public class CreateTableType extends ParserTypes {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			schema.put(key, dbType);
+			names.add(key);
+			types.add(dbType);
+			schema.put(key, names.size()-1);
 		}
 		scanner.close();
 	}
