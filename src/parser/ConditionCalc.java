@@ -1,8 +1,9 @@
 package parser;
-//import java.util.HashMap;
-//import java.util.List;
+import java.util.HashMap;
 
-import database.Database;
+import dbTypes.DBTypes;
+import dbTypes.VARCHAR;
+import table.*;
 //import dbTypes.DBTypes;
 
 
@@ -10,9 +11,11 @@ import database.Database;
 
 public class ConditionCalc {
 	
-	//private Database database;
-	public ConditionCalc(Database database){
-	//	this.database = database;
+	private DBObject mydb;
+	private HashMap<String, DBTypes> myrow;
+	public ConditionCalc(DBObject inputdb){
+		this.mydb = inputdb;
+		 myrow = mydb.getRow();
 	}
 //	public List<String> Fields(String s){
 //		List<String> ans;
@@ -186,13 +189,14 @@ public class ConditionCalc {
 	
 	private  String Clean(String input){
 		int i =0;
-		while(input.charAt(i)==' ')
+		while(i<input.length() && input.charAt(i)==' ')
 			i++;
+		if(i==input.length())
+			{System.out.println("(Err)Empty string to clean!");return "";}
 		int j = input.length();
 		while(input.charAt(j-1)==' ')
 			j--;
-		if(j<i)
-			{System.out.println("(Err)Empty string to clean!");return "";}
+			
 		
 		return input.substring(i,j);
 	}
@@ -210,32 +214,21 @@ public class ConditionCalc {
 		return false;
 	}
 	private  int getIntValue(String a){
-		//TODO: How?
-		if(a.equals("IK"))
-			return 3;
-		if(a.equals("IS"))
-			return 7;
-		return 0;
+		return ((Integer)myrow.get(a).getValue()).intValue();
 	}
 	private  String getStrValue(String a){
-		//TODO: How?
-		if(a.equals("SS"))
-			return "salam";
-		if(a.equals("SK"))
-			return "bye";
-		return "";
+		return (String)myrow.get(a).getValue();
 	}
 	private  String getType(String a){
 		//TODO: How?
-		if(a.equals("IK")
-		|| a.equals("IS")
-		)
+		if(!myrow.containsKey(a))
+			System.out.println(a+" isn't in hash map");
+		if(myrow.get(a).getClass().equals(VARCHAR.class))
+				return "STRING";
+		else
 			return "INT";
-		if(a.equals("SK")
-		|| a.equals("SS")
-		)
-			return "STRING";
-		return "STRING";
+			
+		
 		//return "INT";
 	}
 	
