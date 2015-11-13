@@ -48,18 +48,25 @@ public class DBTable {
 		}
 	}
 	
-	public void update(){
+
+	public List<DBObject> selectRows(String whereClause){
+		List<DBObject> result = new LinkedList<DBObject>();
+		for(DBObject row : tableObjects){	//TODO make sure this is the correct order for the result
+			if(/** misgar condition **/true){   //TODO
+				result.add(row);
+			}
+		}
+		return row;
+	}
+	
+	public void update(String columnName,String whereClause,String valueClause){
+		List<DBObject> rows= selectRows(whereClause);
+	}
+	
+	public void delete(String whereClause){
 		//TODO
 	}
 	
-	public void delete(){
-		//TODO
-	}
-	
-	public List<DBObject> select(){
-		//TODO
-		return null;
-	}
 	
 	public void DBTableGet()
 	{

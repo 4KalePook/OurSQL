@@ -35,7 +35,7 @@ public class Database {
 	}
 	
 	public void selectFrom(String tableName,List<String> columnNames, String whereClause  ){
-		List<DBObject> rows=tables.get(tableName).select(whereClause);
+		List<DBObject> rows=tables.get(tableName).selectRows(whereClause);
 		
 	}
 	
