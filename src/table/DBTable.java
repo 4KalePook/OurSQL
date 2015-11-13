@@ -73,7 +73,7 @@ public class DBTable {
 		List<DBObject> rows= selectRows(whereClause);
 		for(DBObject row: rows){
 			ConditionCalc calc=new ConditionCalc(row);
-			DBTypes value;
+			DBTypes value=null;
 			if(row.getField(columnName).getClass().equals(VARCHAR.class)){  
 				value = new VARCHAR(calc.StrCompVal(valueClause)); // If it's string
 			}else if(row.getField(columnName).getClass().equals(INT.class)){ 
