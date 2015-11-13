@@ -1,8 +1,9 @@
 package parser;
-//import java.util.HashMap;
-//import java.util.List;
+import java.util.HashMap;
 
-import database.Database;
+import dbTypes.DBTypes;
+import dbTypes.VARCHAR;
+import table.*;
 //import dbTypes.DBTypes;
 
 
@@ -10,9 +11,11 @@ import database.Database;
 
 public class ConditionCalc {
 	
-	//private Database database;
-	public ConditionCalc(Database database){
-	//	this.database = database;
+	private DBObject mydb;
+	private HashMap<String, DBTypes> myrow;
+	public ConditionCalc(DBObject inputdb){
+		this.mydb = inputdb;
+		 myrow = mydb.getRow();
 	}
 //	public List<String> Fields(String s){
 //		List<String> ans;
@@ -61,7 +64,7 @@ public class ConditionCalc {
 		while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
 			i++;
 		String ColName = tuple.substring(0,i);
-		int type = getType(ColName)=="String"?0:1;
+		int type = getType(ColName);
 		String sub = Clean(tuple.substring(i,tuple.length()));
 		if(type == 0){
 			String value = getStrValue(ColName);
@@ -79,7 +82,7 @@ public class ConditionCalc {
 				return compareFrom1 == 0;
 		}
 		if(type == 1){
-			int value = getIntValue(ColName);
+			long value = getIntValue(ColName);
 			sub = Clean(sub);
 			if(sub.startsWith("<=") || sub.startsWith("=<"))
 				return (value <= IntCompVal(sub.substring(2, sub.length())));
@@ -142,7 +145,7 @@ public class ConditionCalc {
 		return "";
 	}
 	
-	private  int IntCompVal(String comp){
+	private long IntCompVal(String comp){
 		int i = 0;
 		int numb = 0;
 		while(i<comp.length()&& is_digit(comp.charAt(i))){
@@ -158,7 +161,7 @@ public class ConditionCalc {
 		// i == 0
 		while(i<comp.length()&& (is_digit(comp.charAt(i))||is_letter(comp.charAt(i))))
 			i++;
-		int value = getIntValue(comp.substring(0,i));
+		long value = getIntValue(comp.substring(0,i));
 		if(i==comp.length())
 			return value;
 		if(i!=0)
@@ -168,7 +171,7 @@ public class ConditionCalc {
 		return 0;
 	}
 	
-	private  int inIntCompVal(int numb, String incomp){
+	private long inIntCompVal(long numb, String incomp){
 		incomp = Clean(incomp);
 		if(incomp.startsWith("+"))
 			return numb+IntCompVal(incomp.substring(1,incomp.length()));
@@ -186,13 +189,14 @@ public class ConditionCalc {
 	
 	private  String Clean(String input){
 		int i =0;
-		while(input.charAt(i)==' ')
+		while(i<input.length() && input.charAt(i)==' ')
 			i++;
+		if(i==input.length())
+			{System.out.println("(Err)Empty string to clean!");return "";}
 		int j = input.length();
 		while(input.charAt(j-1)==' ')
 			j--;
-		if(j<i)
-			{System.out.println("(Err)Empty string to clean!");return "";}
+			
 		
 		return input.substring(i,j);
 	}
@@ -209,33 +213,22 @@ public class ConditionCalc {
 			return true;
 		return false;
 	}
-	private  int getIntValue(String a){
-		//TODO: How?
-		if(a.equals("IK"))
-			return 3;
-		if(a.equals("IS"))
-			return 7;
-		return 0;
+	private  long getIntValue(String a){
+		return ((long)myrow.get(a).getValue());
 	}
 	private  String getStrValue(String a){
-		//TODO: How?
-		if(a.equals("SS"))
-			return "salam";
-		if(a.equals("SK"))
-			return "bye";
-		return "";
+		return (String)myrow.get(a).getValue();
 	}
-	private  String getType(String a){
+	private  int getType(String a){
 		//TODO: How?
-		if(a.equals("IK")
-		|| a.equals("IS")
-		)
-			return "INT";
-		if(a.equals("SK")
-		|| a.equals("SS")
-		)
-			return "STRING";
-		return "STRING";
+		if(!myrow.containsKey(a))
+			System.out.println(a+" isn't in hash map");
+		if(myrow.get(a).getClass().equals(VARCHAR.class))
+				return 0;
+		else
+			return 1;
+			
+		
 		//return "INT";
 	}
 	
