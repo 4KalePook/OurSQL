@@ -1,12 +1,36 @@
 package parser;
+//import java.util.HashMap;
+//import java.util.List;
+
 import database.Database;
+//import dbTypes.DBTypes;
+
+
+
 
 public class ConditionCalc {
-	private Database database;
+	
+	//private Database database;
 	public ConditionCalc(Database database){
-		this.database = database;
+	//	this.database = database;
 	}
-	public  boolean calculate(String tuple){//Calculate Tuple Condition
+//	public List<String> Fields(String s){
+//		List<String> ans;
+//		while(s.length()==0){
+//			if(!is_letter(s.charAt(0)) && !is_digit(s.charAt(0)))
+//				s = s.substring(1,s.length());
+//			if(!is_letter(s.charAt(s.length()-1)) && !is_digit(s.charAt(s.length()-1)))
+//				s = s.substring(0,s.length()-1);
+//			
+//		}
+//		
+//		return null;
+//	}
+	
+	
+	
+	
+	public boolean calculate(String tuple){//Calculate Tuple Condition
 		tuple = Clean(tuple);
 		if(tuple.equals("FALSE"))
 			return false;
@@ -43,7 +67,6 @@ public class ConditionCalc {
 			String value = getStrValue(ColName);
 			int compareFrom2 = value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) ;
 			int compareFrom1 = value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) ;
-			//TODO: compare < negative == 0 > positive ?
 			if(sub.startsWith("<=") || sub.startsWith("=<") )
 				return compareFrom2 <= 0;
 			if(sub.startsWith(">=") || sub.startsWith("=>") )
@@ -86,7 +109,6 @@ public class ConditionCalc {
 	}
 	
 	private  String StrCompVal(String str){
-		//TODO: field of record
 		str = Clean(str);
 		if(str.charAt(0)== '"'){
 			int i = 1;
@@ -102,14 +124,13 @@ public class ConditionCalc {
 		int i = 0;
 		while(i<str.length()&& (is_digit(str.charAt(i))||is_letter(str.charAt(i))))
 			i++;
-		String value = getStrField(str.substring(0,i));
+		String value = getStrValue(str.substring(0,i));
 		if(i==str.length())
 			return value;
 		if(i!=0)
 			return InStrCompVal(value, str.substring(i, str.length()));
 		
 		
-		//TODO: why reach here
 		return "";
 	}
 	private  String InStrCompVal(String str1, String str2){
@@ -122,7 +143,6 @@ public class ConditionCalc {
 	}
 	
 	private  int IntCompVal(String comp){
-		//TODO:field of record
 		int i = 0;
 		int numb = 0;
 		while(i<comp.length()&& is_digit(comp.charAt(i))){
@@ -138,13 +158,13 @@ public class ConditionCalc {
 		// i == 0
 		while(i<comp.length()&& (is_digit(comp.charAt(i))||is_letter(comp.charAt(i))))
 			i++;
-		int value = getIntField(comp.substring(0,i));
+		int value = getIntValue(comp.substring(0,i));
 		if(i==comp.length())
 			return value;
 		if(i!=0)
 			return inIntCompVal(value, comp.substring(i, comp.length()));
 		
-		//TODO: why reach here
+		//bad int comp val
 		return 0;
 	}
 	
@@ -159,7 +179,8 @@ public class ConditionCalc {
 		if(incomp.startsWith("/"))
 			return numb/IntCompVal(incomp.substring(1,incomp.length()));
 		
-		//TODO:why reach here
+		//Bad in int compVal
+		
 		return 0;
 	}
 	
@@ -217,18 +238,5 @@ public class ConditionCalc {
 		return "STRING";
 		//return "INT";
 	}
-	private  int getIntField(String a){
-		if(a.equals("i5"))
-			return 5;
-		if(a.equals("i1"))
-			return 1;
-		return 0;
-	}
-	private  String getStrField(String a){
-		if(a.equals("sb"))
-			return "b";
-		if(a.equals("st"))
-			return "t";
-		return "";
-	}
+	
 }
