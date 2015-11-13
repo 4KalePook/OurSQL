@@ -2,6 +2,7 @@ package table;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 
 import dbTypes.DBTypes;
 import parser.CreateTableType;
@@ -34,5 +35,9 @@ public class DBTable {
 	public void DBTableGet()
 	{
 		;
+	}
+	public List<DBTypes> getColumnTypes(){
+		//TODO
+		return null;
 	}
 }

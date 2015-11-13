@@ -33,17 +33,16 @@ public class CreateTableType extends ParserTypes {
 		scanner.next(); // create
 		scanner.next(); // table
 		tableName = scanner.next();
-		System.out.println("name: " + tableName);
 		
 		while(scanner.hasNext()){
 			String key = scanner.next();
 			String type = scanner.next();
-			Class c;
+			Class<?> c;
 			DBTypes dbType = null;
 			try {
 				c = DBEnumTypes.valueOf(type).getTypeClass();
 				dbType = (DBTypes) c.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
+			} catch ( InstantiationException | IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

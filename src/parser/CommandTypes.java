@@ -1,7 +1,9 @@
 package parser;
 
 public enum CommandTypes{
-	CREATE_TABLE("CREATE TABLE", CreateTableType.class); //, CREATE_INDEX("CREATE INDEX"), INSERT_INTO("INSERT INTO"); //TODO: add other type
+	CREATE_TABLE("CREATE TABLE", CreateTableType.class) ,
+	CREATE_INDEX("CREATE INDEX", CreateIndexType.class) ,
+	INSERT_INTO("INSERT INTO",InsertType.class); //TODO: add other type
 	
 	private String commandText;
 	private Class commandClass;
