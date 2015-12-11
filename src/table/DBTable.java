@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import database.Database;
 import dbTypes.DBTypes;
 import dbTypes.INT;
 import dbTypes.VARCHAR;
@@ -11,13 +12,17 @@ import parser.ConditionCalc;
 import parser.CreateTableType;
 
 public class DBTable {
+	Database database;
 	LinkedList<DBObject> tableObjects;
 	HashMap<String, TableIndex<DBTypes> > indices;
+	String primaryKey;
+	HashMap<String, ForeignKeyInv> fkInvTables;  // first object is the tableName
 	
 	HashMap<String, DBTypes> schema; //HashMap<String, DBTypes> DBObject = new HashMap<String, DBTypes>(schema);
 	CreateTableType createTable;
 	
-	public DBTable(CreateTableType createTable) {
+	public DBTable(CreateTableType createTable, Database database) {
+		this.database = database;
 		tableObjects = new LinkedList<>();
 		this.createTable = createTable;
 		this.indices = new HashMap<String, TableIndex<DBTypes> >(); 
@@ -27,8 +32,17 @@ public class DBTable {
 			schema.put(columnName,
 					createTable.getTypes().elementAt(createTable.getSchema().get(columnName)));
 		}
+		this.addIndex("primary_key", createTable.getPK());
+		// TODO: implement FK functionality
+		for(ForeignKeyInv fk: createTable.getFKs())
+			database.getTable(fk.tableName).addInvFK(createTable.getTableName(), fk);
+		
 		System.err.println(createTable.getSchema());
 		System.err.println(createTable.getTableName());
+	}
+	
+	public void addInvFK(String tableName, ForeignKeyInv fk) {
+		fkInvTables.put(tableName, fk);
 	}
 	
 	public void addIndex(String indexName, String columnName) {
