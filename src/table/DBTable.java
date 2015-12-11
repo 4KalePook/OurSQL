@@ -83,7 +83,8 @@ public class DBTable {
 			}else{
 				System.err.println("Undefined type");
 			}
-			row.insertField(columnName, value);
+	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
+			row.updateField(columnName, value);
 		}
 	}
 	

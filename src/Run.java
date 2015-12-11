@@ -17,13 +17,19 @@ public class Run {
 //		System.out.println(CommandTypes.valueOf("CREATE_TABLE").getCommandText());
 		while(true)
 		{
-			String line =scanner.nextLine();
+			String line = "";
+			try{
+				line =scanner.nextLine();
+			}catch(Exception e){
+				break;
+			}
 			if(line.equals(""))
 				continue;
 			parsedCommand = parser.parseCommand(line);
 			String result = parsedCommand.action(database);
 			if(result!=null)
 				System.out.println(result);
+			
 		}
 //		scanner.close();
 
