@@ -21,10 +21,16 @@ public class DBObject {
 	
 	public void insertField(String fieldName, DBTypes value){
 		//TODO: maybe change db schema!
+		
+		//TODO: decide if this if is necessary 
 		if(!dataSet.containsKey(fieldName))
 			dataSet.put(fieldName, value);
 	}
 	
+	public void updateField(String fieldName, DBTypes value){
+//		if(dataSet.containsKey(fieldName))
+			dataSet.put(fieldName, value);
+	}
 	public DBTypes getField(String fieldName){
 		//TODO: maybe fieldName not exist!
 		if(dataSet.containsKey(fieldName))
