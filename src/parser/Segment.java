@@ -60,23 +60,21 @@ public class Segment {
 	}
 	
 	public Segment intersect(Segment a) {
-		return this;
-		//TODO
-//		SegmentPoint newBegin, newEnd;
-//		if( a.begin.isInfinity() && begin.isInfinity() )
-//			newBegin = new SegmentPoint();
-//		else if( a.begin.getValue().compareTo(begin.getValue()) == -1 )
-//			newBegin = a.begin;
-//		else
-//			newBegin = begin;
-//		
-//		if( a.end.isInfinity() || end.isInfinity() )
-//			newEnd = new SegmentPoint();
-//		else if( a.end.getValue().compareTo(end.getValue()) == 1 )
-//			newEnd = a.end;
-//		else
-//			newEnd = end;
-//		
-//		return new Segment(newBegin, newEnd);
+		SegmentPoint newBegin, newEnd;
+		if( a.begin.isInfinity() && begin.isInfinity() )
+			newBegin = new SegmentPoint();
+		else if( begin.isInfinity() || (!a.begin.isInfinity() && a.begin.getValue().compareTo(begin.getValue()) == 1 ) )
+			newBegin = a.begin;
+		else
+			newBegin = begin;
+		
+		if( a.end.isInfinity() && end.isInfinity() )
+			newEnd = new SegmentPoint();
+		else if( end.isInfinity() || (!a.end.isInfinity() && a.end.getValue().compareTo(end.getValue()) == -1 ) )
+			newEnd = a.end;
+		else
+			newEnd = end;
+		
+		return new Segment(newBegin, newEnd);
 	}
 }
