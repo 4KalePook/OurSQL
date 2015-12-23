@@ -4,38 +4,37 @@ import java.util.HashMap;
 import dbTypes.DBTypes;
 import dbTypes.VARCHAR;
 import table.*;
-//import dbTypes.DBTypes;
-
-
-
 
 public class ConditionCalc {
 	
 	private DBObject mydb;
+	private DBObject mydb2;
+	private boolean tables;	//more than one table then is true
 	private HashMap<String, DBTypes> myrow;
+	private HashMap<String, DBTypes> myrow2;
+	private String table_name1, table_name2;
 	public ConditionCalc(DBObject inputdb){
 		this.mydb = inputdb;
-		 myrow = mydb.getRow();
+		tables = false;
+		myrow = mydb.getRow();
 	}
-//	public List<String> Fields(String s){
-//		List<String> ans;
-//		while(s.length()==0){
-//			if(!is_letter(s.charAt(0)) && !is_digit(s.charAt(0)))
-//				s = s.substring(1,s.length());
-//			if(!is_letter(s.charAt(s.length()-1)) && !is_digit(s.charAt(s.length()-1)))
-//				s = s.substring(0,s.length()-1);
-//			
-//		}
-//		
-//		return null;
-//	}
-	
-	
+	public ConditionCalc(DBObject inputdb, DBObject inputdb2, String table_name1, String table_name2){
+		this.mydb = inputdb;
+		this.mydb2 = inputdb2;
+		this.table_name1 = table_name1;
+		this.table_name2 = table_name2;
+		if(this.mydb2!=null)
+			tables = false;
+		else{
+			tables = true;
+			myrow2 = mydb2.getRow();
+		}
+		myrow = mydb.getRow();
+	}
 	
 	
 	public boolean calculate(String tuple){//Calculate Tuple Condition
 		tuple = Clean(tuple);
-		//System.err.println(tuple+"||\n");
 		if(tuple.equals("FALSE"))
 			return false;
 		if(tuple.equals("TRUE"))
@@ -62,14 +61,27 @@ public class ConditionCalc {
 			return !(calculate(tuple.substring(3,tuple.length())));
 		// if we reach this point this means the tuple_condition starts with COL_NAME
 		int i=0;
+		int j=0;
 		while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
 			i++;
-		String ColName = tuple.substring(0,i);
-		int type = getType(ColName);
+		String table_name="";
+		if(tuple.charAt(i)=='.'){
+			table_name = tuple.substring(0,i);
+			j=i;
+			i++;
+			while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
+				i++;
+		}
+		String ColName = tuple.substring(j,i);
+		int type;
+		if(tables == false)
+			type = getType(ColName);
+		else
+			type = getType(ColName, (table_name==table_name1?1:2));
 		String sub = Clean(tuple.substring(i,tuple.length()));
-		//System.err.println(sub);
+		
 		if(type == 0){
-			String value = getStrValue(ColName);
+			String value = getStrValue(ColName, ((tables==false||table_name==table_name1)?1:2));
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
 				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) <= 0;
 			}
@@ -83,7 +95,7 @@ public class ConditionCalc {
 				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) == 0;
 		}
 		if(type == 1){
-			long value = getIntValue(ColName);
+			long value = getIntValue(ColName, ((tables==false||table_name==table_name1)?1:2));
 			sub = Clean(sub);
 			if(sub.startsWith("<=") || sub.startsWith("=<"))
 				return (value <= IntCompVal(sub.substring(2, sub.length())));
@@ -128,10 +140,19 @@ public class ConditionCalc {
 		}
 		// if we reach this point this means the (int)compare starts with a field
 		//System.err.println(str+"||\n");
-		int i = 0;
-		while(i<str.length()&& (is_digit(str.charAt(i))||is_letter(str.charAt(i))))
+		int i=0;
+		int j=0;
+		while(i<str.length() && is_letter(str.charAt(i)) ||  is_digit(str.charAt(i)))
 			i++;
-		String value = getStrValue(str.substring(0,i));
+		String table_name="";
+		if(str.charAt(i)=='.'){
+			table_name = str.substring(0,i);
+			j=i;
+			i++;
+			while(i<str.length() && is_letter(str.charAt(i)) ||  is_digit(str.charAt(i)))
+				i++;
+		}
+		String value = getStrValue(str.substring(j,i), ((tables==false||table_name==table_name1)?1:2));
 		if(i==str.length())
 			return value;
 		if(i!=0)
@@ -164,15 +185,23 @@ public class ConditionCalc {
 			return inIntCompVal(numb, comp.substring(i, comp.length()));
 		// if we reach this point this means the (int)compare starts with a field
 		// i == 0
-		while(i<comp.length()&& (is_digit(comp.charAt(i))||is_letter(comp.charAt(i))))
+		int j=0;
+		while(i<comp.length() && is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i)))
 			i++;
-		long value = getIntValue(comp.substring(0,i));
+		String table_name="";
+		if(comp.charAt(i)=='.'){
+			table_name = comp.substring(0,i);
+			j=i;
+			i++;
+			while(i<comp.length() && is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i)))
+				i++;
+		}
+		long value = getIntValue(comp.substring(j,i), ((tables==false||table_name==table_name1)?1:2) );
 		if(i==comp.length())
 			return value;
 		if(i!=0)
 			return inIntCompVal(value, comp.substring(i, comp.length()));
 		
-		//bad int comp val
 		return 0;
 	}
 	
@@ -191,7 +220,7 @@ public class ConditionCalc {
 		
 		return 0;
 	}
-	
+////////////////////////////////////////////////////////////////////////////	
 	private  String Clean(String input){
 		int i =0;
 		while(i<input.length() && input.charAt(i)==' ')
@@ -205,6 +234,7 @@ public class ConditionCalc {
 		
 		return input.substring(i,j);
 	}
+//////////////////////////////////////////////////////////////////////////	
 	private  boolean is_letter(char c){
 		if('a'<=c && c<='z')
 			return true;
@@ -213,21 +243,27 @@ public class ConditionCalc {
 		return false;
 	}
 	private  boolean is_digit(char c){
-		//TODO: How?
 		if('0'<=c && c<='9')
 			return true;
 		return false;
 	}
-	private  long getIntValue(String a){
-		return ((long)myrow.get(a).getValue());
+//////////////////////////////////////////////////////////////////////////	
+	
+	private  long getIntValue(String a, int table){
+		if(table == 1)
+			return ((long)myrow.get(a).getValue());
+		else
+			return ((long)myrow2.get(a).getValue());
 	}
-	private  String getStrValue(String a){
-		//if(!myrow.containsKey(a))
-			//System.out.println(a);
-		return (String)myrow.get(a).getValue();
+	
+	private  String getStrValue(String a, int table){
+		if(table==1)
+			return (String)myrow.get(a).getValue();
+		else
+			return (String)myrow.get(a).getValue();
 	}
+	
 	private  int getType(String a){
-		//TODO: How?
 		if(!myrow.containsKey(a))
 			System.err.println(a+" isn't in hash map");
 		if(myrow.get(a).getClass().equals(VARCHAR.class))
@@ -235,8 +271,24 @@ public class ConditionCalc {
 		else
 			return 1;
 			
-		
-		//return "INT";
 	}
 	
+	private  int getType(String a, int table){
+		if(table == 1){
+			if(!myrow.containsKey(a))
+				System.err.println(a+" isn't in hash map");
+			if(myrow.get(a).getClass().equals(VARCHAR.class))
+			return 0;
+		else
+			return 1;
+		}else{
+			if(!myrow2.containsKey(a))
+				System.err.println(a+" isn't in hash map");
+			if(myrow2.get(a).getClass().equals(VARCHAR.class))
+				return 0;
+			else
+				return 1;
+		}
+			
+	}
 }
