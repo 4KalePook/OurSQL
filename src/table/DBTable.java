@@ -236,7 +236,7 @@ public class DBTable {
 		List<DBObject> rows = new LinkedList<DBObject>();
 		
 		Set<Map.Entry<DBTypes, DBObject>> seg= indices.get(indexName).getSegment(value, true, value, true);
-		for(Map.Entry<DBTypes, DBObject> entry : seg){	//TODO make sure this is the correct order for the result
+		for(Map.Entry<DBTypes, DBObject> entry : seg){	
 			rows.add(entry.getValue());
 		}
 		
