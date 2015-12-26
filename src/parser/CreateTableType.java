@@ -9,7 +9,7 @@ import dbTypes.DBEnumTypes;
 import dbTypes.DBTypes;
 import table.Action;
 import table.DBTable;
-import table.ForeignKeyInv;
+import table.ForeignKey;
 
 public class CreateTableType extends ParserTypes {
 
@@ -17,10 +17,10 @@ public class CreateTableType extends ParserTypes {
 	HashMap<String, Integer> schema;
 	Vector<String> names;
 	Vector<DBTypes> types;
-	Vector<ForeignKeyInv> fks;
+	Vector<ForeignKey> fks;
 	String PK;
 	
-	public Vector<ForeignKeyInv> getFKs() {
+	public Vector<ForeignKey> getFKs() {
 		return fks;
 	}
 	
@@ -101,7 +101,7 @@ public class CreateTableType extends ParserTypes {
 			scanner.next(); // UPDATE
 			Action onUpdate = Action.getValue(scanner.next());
 			
-			fks.add(new ForeignKeyInv(tableName, onUpdate, onDelete));
+			fks.add(new ForeignKey(tableName, fkcol, onUpdate, onDelete));
 		}
 
 	}
