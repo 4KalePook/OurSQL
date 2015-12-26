@@ -23,10 +23,11 @@ public class ConditionCalc {
 		this.mydb2 = inputdb2;
 		this.table_name1 = table_name1;
 		this.table_name2 = table_name2;
-		if(this.mydb2!=null)
+		if(this.mydb2==null)
 			tables = false;
 		else{
 			tables = true;
+			
 			myrow2 = mydb2.getRow();
 		}
 		myrow = mydb.getRow();
@@ -64,10 +65,10 @@ public class ConditionCalc {
 		int j=0;
 		while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
 			i++;
-		String table_name="";
+		String table_name=table_name1;
 		if(tuple.charAt(i)=='.'){
 			table_name = tuple.substring(0,i);
-			j=i;
+			j=i+1;
 			i++;
 			while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
 				i++;
@@ -77,17 +78,17 @@ public class ConditionCalc {
 		if(tables == false)
 			type = getType(ColName);
 		else
-			type = getType(ColName, (table_name==table_name1?1:2));
+			type = getType(ColName, (table_name.equals(table_name1)?1:2));
 		String sub = Clean(tuple.substring(i,tuple.length()));
-		
 		if(type == 0){
-			String value = getStrValue(ColName, ((tables==false||table_name==table_name1)?1:2));
+			String value = getStrValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2));
+			System.err.println(value);
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
 				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) <= 0;
 			}
 			if(sub.startsWith(">=") || sub.startsWith("=>") )
 				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) >= 0;
-			if(sub.startsWith(">") )
+			if(sub.startsWith("<") )
 				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) <  0;				
 			if(sub.startsWith(">") )
 				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) >  0;
@@ -95,7 +96,7 @@ public class ConditionCalc {
 				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) == 0;
 		}
 		if(type == 1){
-			long value = getIntValue(ColName, ((tables==false||table_name==table_name1)?1:2));
+			long value = getIntValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2));
 			sub = Clean(sub);
 			if(sub.startsWith("<=") || sub.startsWith("=<"))
 				return (value <= IntCompVal(sub.substring(2, sub.length())));
@@ -142,17 +143,20 @@ public class ConditionCalc {
 		//System.err.println(str+"||\n");
 		int i=0;
 		int j=0;
-		while(i<str.length() && is_letter(str.charAt(i)) ||  is_digit(str.charAt(i)))
+		System.err.print(str);
+		while(i<str.length() && (is_letter(str.charAt(i)) ||  is_digit(str.charAt(i)))){
+			System.err.println(str.length());
 			i++;
-		String table_name="";
-		if(str.charAt(i)=='.'){
+		}
+		String table_name=table_name1;
+		if(i<str.length() && str.charAt(i)=='.'){
 			table_name = str.substring(0,i);
-			j=i;
+			j=i+1;
 			i++;
 			while(i<str.length() && is_letter(str.charAt(i)) ||  is_digit(str.charAt(i)))
 				i++;
 		}
-		String value = getStrValue(str.substring(j,i), ((tables==false||table_name==table_name1)?1:2));
+		String value = getStrValue(str.substring(j,i), ((tables==false||table_name.equals(table_name1))?1:2));
 		if(i==str.length())
 			return value;
 		if(i!=0)
@@ -188,7 +192,7 @@ public class ConditionCalc {
 		int j=0;
 		while(i<comp.length() && is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i)))
 			i++;
-		String table_name="";
+		String table_name=table_name1;
 		if(comp.charAt(i)=='.'){
 			table_name = comp.substring(0,i);
 			j=i;
@@ -196,7 +200,7 @@ public class ConditionCalc {
 			while(i<comp.length() && is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i)))
 				i++;
 		}
-		long value = getIntValue(comp.substring(j,i), ((tables==false||table_name==table_name1)?1:2) );
+		long value = getIntValue(comp.substring(j,i), ((tables==false||table_name.equals(table_name1))?1:2) );
 		if(i==comp.length())
 			return value;
 		if(i!=0)
@@ -250,6 +254,7 @@ public class ConditionCalc {
 //////////////////////////////////////////////////////////////////////////	
 	
 	private  long getIntValue(String a, int table){
+
 		if(table == 1)
 			return ((long)myrow.get(a).getValue());
 		else
@@ -264,6 +269,7 @@ public class ConditionCalc {
 	}
 	
 	private  int getType(String a){
+		
 		if(!myrow.containsKey(a))
 			System.err.println(a+" isn't in hash map");
 		if(myrow.get(a).getClass().equals(VARCHAR.class))
@@ -274,6 +280,7 @@ public class ConditionCalc {
 	}
 	
 	private  int getType(String a, int table){
+
 		if(table == 1){
 			if(!myrow.containsKey(a))
 				System.err.println(a+" isn't in hash map");
