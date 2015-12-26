@@ -233,11 +233,14 @@ public class DBTable {
 	
 	
 	public List<DBObject> getRowByIndex(String indexName, DBTypes value){
-//		List<DBObject> rows = indices.get(indexName).getFirst(value);
-//		return rows;
-		System.out.println("ERRRRRRRRR getRowByIndex return NULL");
-		return null;
+		List<DBObject> rows = new LinkedList<DBObject>();
 		
+		Set<Map.Entry<DBTypes, DBObject>> seg= indices.get(indexName).getSegment(value, true, value, true);
+		for(Map.Entry<DBTypes, DBObject> entry : seg){	//TODO make sure this is the correct order for the result
+			rows.add(entry.getValue());
+		}
+		
+		return rows;
 	}
 	
 	public boolean updateFK(String tableName, DBTypes oldVal, DBTypes newVal)
