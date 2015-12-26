@@ -30,7 +30,9 @@ public class DBTable {
 		this.database = database;
 		tableObjects = new LinkedList<>();
 		this.createTable = createTable;
-		this.indices = new HashMap<String, TableIndex<DBTypes> >(); 
+		this.indices = new HashMap<String, TableIndex<DBTypes> >();
+		fkInvTables = new LinkedList<>();
+		fkTables = new HashMap<>();
 		
 		schema=new HashMap<String, DBTypes>();
 		for(String columnName : createTable.getSchema().keySet()){
