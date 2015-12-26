@@ -49,6 +49,7 @@ public class CreateTableType extends ParserTypes {
 		schema = new HashMap<>();
 		names = new Vector<String>();
 		types = new Vector<DBTypes>();
+		fks = new Vector<>();
 	}
 
 	@Override
