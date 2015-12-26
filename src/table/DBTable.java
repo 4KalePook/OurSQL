@@ -4,6 +4,8 @@ import java.io.ObjectInputStream.GetField;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import database.Database;
 import dbTypes.DBTypes;
@@ -126,12 +128,14 @@ public class DBTable {
 			return result;
 		}else{
 			List<DBObject> result = new LinkedList<DBObject>();
-			String fkcol = fkInvTables.get(Name2).;
+			String fkcol = fkTables.get(Name2).columnName;
 			for(DBObject row2 : table2.tableObjects){	//TODO make sure this is the correct order for the result
 				String col=table2.primaryKey;	
+				DBTypes value = row2.getField(col);
 				
-				Segment seg=table2.indices.get(col).getSegment(, begInc, end, endInc);
-				for(DBObject row : tableObjects){	//TODO make sure this is the correct order for the result
+				Set<Map.Entry<DBTypes, DBObject>> seg= indices.get(fkcol).getSegment(value, true, value, true);
+				for(Map.Entry<DBTypes, DBObject> entry : seg){	//TODO make sure this is the correct order for the result
+					DBObject row1=entry.getValue();
 					ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);
 					if(calc.calculate(whereClause)){   //TODO
 						result.add(join(row1,row2,Name1,Name2,false));
