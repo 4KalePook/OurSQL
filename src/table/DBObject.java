@@ -10,9 +10,11 @@ public class DBObject {
 		this.dataSet = dataSet;
 	}
 	
+	
 	public DBObject() {
 		this.dataSet = new HashMap<String, DBTypes>();
 	}
+	
 	
 	public void insertRow(List<DBTypes> dataSet){
 		//TODO: call garbage COllector on this.dataSet?!

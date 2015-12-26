@@ -10,8 +10,11 @@ public class SelectType extends ParserTypes {
 
 	String tableName1;
 	String tableName2;
+	List<String> fullNames;
 	List<String> columnNames;
+	List<String> tableNames;
 	String whereClause;
+	boolean isjoin;
 
 
 
@@ -25,7 +28,9 @@ public class SelectType extends ParserTypes {
 
 	public SelectType() {
 		this.commandType = CommandTypes.SELECT;
+		fullNames= new LinkedList<String>();
 		columnNames= new LinkedList<String>();
+		tableNames= new LinkedList<String>();
 	}
 	
 	@Override
@@ -33,22 +38,31 @@ public class SelectType extends ParserTypes {
 		Scanner scanner = new Scanner(command);
 		scanner.useDelimiter(ParseCommand.DELIMS);
 		scanner.next(); // select
-		columnNames.clear();
+		fullNames.clear();
 		String token=scanner.next();
 		while(!token.equals("FROM")){
-			columnNames.add(token);
+			fullNames.add(token);
 			token=scanner.next();
 		}
 		tableName1 = scanner.next();  //table name
 		tableName2 = "";
+		isjoin=false;
+		
 		if(scanner.hasNext()){
-			String next=scanner.next();// where / table 2
-			if(next!="WHERE"){  // it was table 2
+			String next=scanner.next();// where / JOIN / table 2
+			if(next.equals("JOIN")){
+				next=scanner.next(); // table 2
+				isjoin=true;
+			}
+			if(!next.equals("WHERE")){  // it was table 2
 				tableName2=next;
 				if(scanner.hasNext()){
 					scanner.next();// where
 				}
 			}
+		}
+		for(String str: fullNames){
+			
 		}
 		if(scanner.hasNext()){
 			String rest=scanner.nextLine();
@@ -65,7 +79,7 @@ public class SelectType extends ParserTypes {
 
 	@Override
 	public String action(Database database) {
-		database.selectFrom(tableName1,tableName2, columnNames, whereClause);
+		database.selectFrom(tableName1,tableName2, columnNames , whereClause,isjoin);
 		return null;
 	}
 	
