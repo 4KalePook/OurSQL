@@ -81,13 +81,16 @@ public class CreateTableType extends ParserTypes {
 		scanner.close();
 
 		scanner = new Scanner(command.substring(columnsEnd+1));
-		scanner.next(); // PRIMARY
-		scanner.next(); // KEY
-		PK = scanner.next();
 
+		PK="";
+		
 		while(scanner.hasNext()) {
-			scanner.next(); // FOREIGN
+			String type = scanner.next(); // FOREIGN
 			scanner.next(); // KEY
+			if(type=="PRIMARY"){
+				PK = scanner.next();
+				continue;
+			}
 			String fkcol = scanner.next();
 			scanner.next(); // REFERENCES
 			String tableName = scanner.next();
