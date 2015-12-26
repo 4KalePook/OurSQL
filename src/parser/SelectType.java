@@ -8,14 +8,18 @@ import database.Database;
 
 public class SelectType extends ParserTypes {
 
-	String tableName;
+	String tableName1;
+	String tableName2;
 	List<String> columnNames;
 	String whereClause;
 
 
 
-	public String getTableName() {
-		return tableName;
+	public String getTableName1() {
+		return tableName1;
+	}
+	public String getTableName2() {
+		return tableName2;
 	}
 
 
@@ -35,9 +39,18 @@ public class SelectType extends ParserTypes {
 			columnNames.add(token);
 			token=scanner.next();
 		}
-		tableName = scanner.next();  //table name
+		tableName1 = scanner.next();  //table name
+		tableName2 = "";
 		if(scanner.hasNext()){
-			scanner.next();// where
+			String next=scanner.next();// where / table 2
+			if(next!="WHERE"){  // it was table 2
+				tableName2=next;
+				if(scanner.hasNext()){
+					scanner.next();// where
+				}
+			}
+		}
+		if(scanner.hasNext()){
 			String rest=scanner.nextLine();
 			int begin= 0;
 			int end = rest.indexOf(";");
@@ -52,7 +65,7 @@ public class SelectType extends ParserTypes {
 
 	@Override
 	public String action(Database database) {
-		database.selectFrom(tableName, columnNames, whereClause);
+		database.selectFrom(tableName1,tableName2, columnNames, whereClause);
 		return null;
 	}
 	

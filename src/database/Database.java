@@ -33,9 +33,9 @@ public class Database {
 		tables.get(tableName).delete(whereClause);
 	}
 	
-	public void selectFrom(String tableName,List<String> columnNames, String whereClause  ){
+	public void selectFrom(String tableName1,String tableName2,List<String> columnNames, String whereClause  ){
 		
-		DBTable table = tables.get(tableName);
+		DBTable table = tables.get(tableName1);
 		List<DBObject> rows=table.selectRows(whereClause);
 		if(rows.isEmpty()){
 			System.out.println("NO RESULTS");

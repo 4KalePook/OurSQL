@@ -85,7 +85,7 @@ public class CreateTableType extends ParserTypes {
 		PK="";
 		
 		while(scanner.hasNext()) {
-			String type = scanner.next(); // FOREIGN
+			String type = scanner.next(); // FOREIGN / PRIMARY
 			scanner.next(); // KEY
 			if(type=="PRIMARY"){
 				PK = scanner.next();
