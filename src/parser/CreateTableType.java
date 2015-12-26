@@ -90,11 +90,12 @@ public class CreateTableType extends ParserTypes {
 			String type = scanner.next(); // FOREIGN / PRIMARY
 			System.err.println(type);
 			scanner.next(); // KEY
-			if(type=="PRIMARY"){
+			if(type.equals("PRIMARY")){
 				PK = scanner.next();
 				continue;
 			}
 			String fkcol = scanner.next();
+			System.err.println(fkcol);
 			scanner.next(); // REFERENCES
 			String tableName = scanner.next();
 			scanner.next(); // ON
