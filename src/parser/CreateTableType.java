@@ -49,16 +49,17 @@ public class CreateTableType extends ParserTypes {
 		schema = new HashMap<>();
 		names = new Vector<String>();
 		types = new Vector<DBTypes>();
+		fks = new Vector<>();
 	}
 
 	@Override
 	public void parse() {
 		int columnsStart = command.indexOf('(');
 		int columnsEnd = command.indexOf(')');
-		Scanner scanner = new Scanner(command.substring(columnsStart+1, columnsEnd));
+		Scanner scanner = new Scanner(command.substring(0, columnsEnd));
 		scanner.useDelimiter(ParseCommand.DELIMS);
-//		scanner.next(); // create
-//		scanner.next(); // table
+		scanner.next(); // create
+		scanner.next(); // table
 
 		tableName = scanner.next();
 
@@ -81,17 +82,21 @@ public class CreateTableType extends ParserTypes {
 		scanner.close();
 
 		scanner = new Scanner(command.substring(columnsEnd+1));
+		scanner.useDelimiter(ParseCommand.DELIMS);
+
 
 		PK="";
 		
 		while(scanner.hasNext()) {
 			String type = scanner.next(); // FOREIGN / PRIMARY
+			System.err.println(type);
 			scanner.next(); // KEY
-			if(type=="PRIMARY"){
+			if(type.equals("PRIMARY")){
 				PK = scanner.next();
 				continue;
 			}
 			String fkcol = scanner.next();
+			System.err.println(fkcol);
 			scanner.next(); // REFERENCES
 			String tableName = scanner.next();
 			scanner.next(); // ON
