@@ -93,29 +93,63 @@ public class DBTable {
 		return result;
 	}
 	
-	public void update(String columnName,String valueClause,String whereClause){
+	public boolean update(String columnName,String valueClause,String whereClause){
 		List<DBObject> rows= selectRows(whereClause);
+		return updateSelf(rows, columnName, valueClause);
+	}
+	
+	public boolean updateSelf(List<DBObject> rows, String columnName, DBTypes value){
 		System.err.println(rows.size() + "!@#$");
 		for(DBObject row: rows){
-			ConditionCalc calc=new ConditionCalc(row);
-			DBTypes value=null;
-			if(row.getField(columnName).getClass().equals(VARCHAR.class)){  
-				value = new VARCHAR(calc.StrCompVal(valueClause)); // If it's string
-			}else if(row.getField(columnName).getClass().equals(INT.class)){ 
-				value = new INT(calc.IntCompVal(valueClause)); // if it's integer 
-			}else{
-				System.err.println("Undefined type");
-			}
-	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
-			row.updateField(columnName, value);
+			//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
+			if(!updateRow(row, value, columnName))
+				return false;
 		}
+		return true;
+	}
+	
+	public boolean updateSelf(List<DBObject> rows, String columnName, String valueClause){
+		System.err.println(rows.size() + "!@#$");
+		for(DBObject row: rows){
+			DBTypes value = getNewVal(row, columnName, valueClause);
+	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
+			if(!updateRow(row, value, columnName))
+				return false;
+		}
+		return true;
+	}
+	
+	public boolean updateRow(DBObject row, DBTypes newVal, String columnName){
+		DBTypes oldVal = row.getField(columnName);
+		row.updateField(columnName, newVal);
+		if(columnName == primaryKey)
+			if(!updateInvFK(oldVal, newVal))
+				return false;
+		return true;
+	}
+	public DBTypes getNewVal(DBObject row, String columnName, String valueClause){
+		ConditionCalc calc=new ConditionCalc(row);
+		DBTypes value=null;
+		if(row.getField(columnName).getClass().equals(VARCHAR.class)){  
+			value = new VARCHAR(calc.StrCompVal(valueClause)); // If it's string
+		}else if(row.getField(columnName).getClass().equals(INT.class)){ 
+			value = new INT(calc.IntCompVal(valueClause)); // if it's integer 
+		}else{
+			System.err.println("Undefined type");
+		}
+		return value;
 	}
 	
 	public boolean delete(String whereClause){
 		List<DBObject> rows= selectRows(whereClause);
 		if(!checkInvFKDelete(rows))
+		{
+			System.err.println("check on delete false!");
 			return false;
+		}
+		System.err.println("check on delete ok!");
 		deleteInvFK(rows);
+		System.err.println("delete INVFK ok");
 		deleteSelf(rows);
 		return true;
 	}
@@ -144,11 +178,35 @@ public class DBTable {
 	
 	
 	public List<DBObject> getRowByIndex(String indexName, DBTypes value){
-//		rows = indices.get(indexName).get ... /(row.getField(indexName), row);
+//		List<DBObject> rows = indices.get(indexName).getFirst(value);
 //		return rows;
+		System.out.println("ERRRRRRRRR getRowByIndex return NULL");
 		return null;
 		
 	}
+	
+	public boolean updateFK(String tableName, DBTypes oldVal, DBTypes newVal)
+	{
+		ForeignKey fk = fkTables.get(tableName);
+		List<DBObject> rows = getRowByIndex(fk.columnName, oldVal);
+		if(fk.onUpdate == Action.RESTRICT){
+			if(rows.size() > 0)
+				return false;
+			return true;
+		}
+		else{
+			return updateSelf(rows, fk.columnName, newVal);
+		}
+	}
+	
+	private boolean updateInvFK(DBTypes oldVal, DBTypes newVal)
+	{
+		for(String fk: fkInvTables)
+			if(!database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal))
+				return false;
+		return true;
+	}
+	
 	public boolean checkFKDelete(String tableName, DBTypes value)
 	{
 		ForeignKey fk = fkTables.get(tableName);
@@ -188,6 +246,4 @@ public class DBTable {
 				database.getTable(fk).deleteFK(createTable.getTableName(), row.getField(primaryKey));
 		}
 	}
-
-	
 }
