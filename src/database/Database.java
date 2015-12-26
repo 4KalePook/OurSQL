@@ -33,14 +33,21 @@ public class Database {
 		tables.get(tableName).delete(whereClause);
 	}
 	
-	public void selectFrom(String tableName1,String tableName2,List<String> columnNames, String whereClause  ){
+	public void selectFrom(String tableName1,String tableName2,List<String> columnNames, String whereClause, boolean isjoin  ){
+
+		//TODO: optimize with indices
+		DBTable table1 = tables.get(tableName1);
 		
-		DBTable table = tables.get(tableName1);
-		List<DBObject> rows=table.selectRows(whereClause);
+		DBTable table2 = table1;
+		if(!tableName2.equals("")){
+				table2=tables.get(tableName2);
+		}
+		List<DBObject> rows=table1.selectRows(tableName1,tableName2,table2,whereClause,isjoin);
 		if(rows.isEmpty()){
 			System.out.println("NO RESULTS");
 			return;    
 		}
+		
 		/*************************
 		 * Displaying the header *
 		 *************************/
@@ -58,8 +65,21 @@ public class Database {
 		 *************************/
 		for(DBObject row: rows){
 			first = true;
-			for(String columnName: columnNames){
-				DBTypes value = row.getField(columnName);
+			for(String str: columnNames){
+				String name;
+				String col;
+				if(str.indexOf(".")!=-1){
+					name=(str.substring(0, str.indexOf('.')));
+					col=(str.substring(str.indexOf('.')+1));
+				}else{
+					name=tableName1;
+					col=str;
+				}
+				
+				DBTypes value = row.getField(name+"."+col);
+				if(value==null && name.equals("")){
+					value= row.getField(col);
+				}
 				if(!first)
 					System.out.print(',');
 				System.out.print(value.getValue().toString());

@@ -1,8 +1,11 @@
 package table;
 
+import java.io.ObjectInputStream.GetField;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import database.Database;
 import dbTypes.DBTypes;
@@ -10,6 +13,7 @@ import dbTypes.INT;
 import dbTypes.VARCHAR;
 import parser.ConditionCalc;
 import parser.CreateTableType;
+import parser.Segment;
 
 public class DBTable {
 	Database database;
@@ -33,10 +37,12 @@ public class DBTable {
 			schema.put(columnName,
 					createTable.getTypes().elementAt(createTable.getSchema().get(columnName)));
 		}
-		
-		primaryKey = createTable.getPK();
-		
-		this.addIndex("primary_key", primaryKey);
+
+		if(!createTable.getPK().equals("")){
+			this.addIndex("primary_key", createTable.getPK());
+			//TODO: edit the code for following reason: primary_key may not exist, (check the sample).
+		}
+
 		// TODO: implement FK functionality
 		for(ForeignKey fk: createTable.getFKs())
 		{
@@ -92,7 +98,54 @@ public class DBTable {
 		}
 		return result;
 	}
-	
+	public DBObject join(DBObject row1, DBObject row2, String Name1, String Name2, boolean isjoin){
+			DBObject ret=new DBObject();
+			for(String key:row1.getRow().keySet()){
+				ret.insertField(Name1+"."+key, row1.getField(key));
+			}
+			for(String key:row2.getRow().keySet()){
+				ret.insertField(Name2+"."+key, row2.getField(key));
+			}
+			return ret;
+	}
+	public List<DBObject> selectRows(String Name1,String Name2,DBTable table2, String whereClause,boolean isjoin){
+		if(Name2.equals("")){
+			return selectRows(whereClause);
+		}
+		if(!isjoin){
+			List<DBObject> result = new LinkedList<DBObject>();
+			for(DBObject row1 : tableObjects){	//TODO make sure this is the correct order for the result
+				
+				for(DBObject row2 : table2.tableObjects){	//TODO make sure this is the correct order for the result
+					ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);
+					if(calc.calculate(whereClause)){   //TODO
+						result.add(join(row1,row2,Name1,Name2,false));
+					}
+				}
+				
+			}
+			
+			return result;
+		}else{
+			List<DBObject> result = new LinkedList<DBObject>();
+			String fkcol = fkTables.get(Name2).columnName;
+			for(DBObject row2 : table2.tableObjects){	//TODO make sure this is the correct order for the result
+				String col=table2.primaryKey;	
+				DBTypes value = row2.getField(col);
+				
+				Set<Map.Entry<DBTypes, DBObject>> seg= indices.get(fkcol).getSegment(value, true, value, true);
+				for(Map.Entry<DBTypes, DBObject> entry : seg){	//TODO make sure this is the correct order for the result
+					DBObject row1=entry.getValue();
+					ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);
+					if(calc.calculate(whereClause)){   //TODO
+						result.add(join(row1,row2,Name1,Name2,false));
+					}
+				}
+				
+			}
+			return result;
+		}
+	}
 	public boolean update(String columnName,String valueClause,String whereClause){
 		List<DBObject> rows= selectRows(whereClause);
 		return updateSelf(rows, columnName, valueClause);
