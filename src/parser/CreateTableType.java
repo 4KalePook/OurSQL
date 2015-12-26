@@ -55,10 +55,10 @@ public class CreateTableType extends ParserTypes {
 	public void parse() {
 		int columnsStart = command.indexOf('(');
 		int columnsEnd = command.indexOf(')');
-		Scanner scanner = new Scanner(command.substring(columnsStart+1, columnsEnd));
+		Scanner scanner = new Scanner(command.substring(0, columnsEnd));
 		scanner.useDelimiter(ParseCommand.DELIMS);
-//		scanner.next(); // create
-//		scanner.next(); // table
+		scanner.next(); // create
+		scanner.next(); // table
 
 		tableName = scanner.next();
 
@@ -81,11 +81,14 @@ public class CreateTableType extends ParserTypes {
 		scanner.close();
 
 		scanner = new Scanner(command.substring(columnsEnd+1));
+		scanner.useDelimiter(ParseCommand.DELIMS);
+
 
 		PK="";
 		
 		while(scanner.hasNext()) {
 			String type = scanner.next(); // FOREIGN / PRIMARY
+			System.err.println(type);
 			scanner.next(); // KEY
 			if(type=="PRIMARY"){
 				PK = scanner.next();
