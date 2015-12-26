@@ -16,7 +16,8 @@ public class DBTable {
 	LinkedList<DBObject> tableObjects;
 	HashMap<String, TableIndex<DBTypes> > indices;
 	String primaryKey;
-	HashMap<String, ForeignKeyInv> fkInvTables;  // first object is the tableName
+	LinkedList<String> fkInvTables;  // TableName where have foreign key to this
+	HashMap<String, ForeignKey> fkTables;  // first object is the table Name
 	
 	HashMap<String, DBTypes> schema; //HashMap<String, DBTypes> DBObject = new HashMap<String, DBTypes>(schema);
 	CreateTableType createTable;
@@ -32,20 +33,28 @@ public class DBTable {
 			schema.put(columnName,
 					createTable.getTypes().elementAt(createTable.getSchema().get(columnName)));
 		}
-		this.addIndex("primary_key", createTable.getPK());
+		
+		primaryKey = createTable.getPK();
+		
+		this.addIndex("primary_key", primaryKey);
 		// TODO: implement FK functionality
-		for(ForeignKeyInv fk: createTable.getFKs())
-			database.getTable(fk.tableName).addInvFK(createTable.getTableName(), fk);
+		for(ForeignKey fk: createTable.getFKs())
+		{
+			this.addIndex(fk.columnName, fk.columnName);
+			database.getTable(fk.tableName).addInvFK(createTable.getTableName());
+		}
 		
 		System.err.println(createTable.getSchema());
 		System.err.println(createTable.getTableName());
 	}
 	
-	public void addInvFK(String tableName, ForeignKeyInv fk) {
-		fkInvTables.put(tableName, fk);
+	public void addInvFK(String tableName) {
+		fkInvTables.add(tableName);
 	}
 	
 	public void addIndex(String indexName, String columnName) {
+		if(indices.containsKey(columnName))
+			return;
 		indices.put(columnName, new TableIndex<DBTypes>());
 		TableIndex<DBTypes> index = indices.get(columnName);
 		for(DBObject obj: tableObjects)
@@ -102,8 +111,16 @@ public class DBTable {
 		}
 	}
 	
-	public void delete(String whereClause){
+	public boolean delete(String whereClause){
 		List<DBObject> rows= selectRows(whereClause);
+		if(!checkInvFKDelete(rows))
+			return false;
+		deleteInvFK(rows);
+		deleteSelf(rows);
+		return true;
+	}
+	
+	public void deleteSelf(List<DBObject> rows){
 		tableObjects.removeAll(rows);
 		for(String indexName : indices.keySet()){
 			TableIndex<DBTypes> index=indices.get(indexName);
@@ -112,7 +129,6 @@ public class DBTable {
 			}
 		}
 	}
-	
 	
 	public void DBTableGet()
 	{
@@ -125,5 +141,53 @@ public class DBTable {
 	public HashMap<String,DBTypes> getSchema(){
 		return schema;
 	}
+	
+	
+	public List<DBObject> getRowByIndex(String indexName, DBTypes value){
+//		rows = indices.get(indexName).get ... /(row.getField(indexName), row);
+//		return rows;
+		return null;
+		
+	}
+	public boolean checkFKDelete(String tableName, DBTypes value)
+	{
+		ForeignKey fk = fkTables.get(tableName);
+		List<DBObject> rows = getRowByIndex(fk.columnName, value);
+		if(fk.onDelete == Action.RESTRICT){
+			if(rows.size() > 0)
+				return false;
+			return true;
+		}
+		else{
+			return checkInvFKDelete(rows);
+		}
+	}
+	
+	private boolean checkInvFKDelete(List<DBObject> rows){
+		
+		for(DBObject row: rows){
+			for(String fk: fkInvTables)
+				database.getTable(fk).checkFKDelete(createTable.getTableName(), row.getField(primaryKey));
+		}
+		return true;
+	}
+	
+	public void deleteFK(String tableName, DBTypes value)
+	{
+		ForeignKey fk = fkTables.get(tableName);
+		List<DBObject> rows = getRowByIndex(fk.columnName, value);
+		deleteInvFK(rows);
+		deleteSelf(rows);
+	}
+	
+	
+	private void deleteInvFK(List<DBObject> rows)
+	{
+		for(DBObject row: rows){
+			for(String fk: fkInvTables)
+				database.getTable(fk).deleteFK(createTable.getTableName(), row.getField(primaryKey));
+		}
+	}
+
 	
 }
