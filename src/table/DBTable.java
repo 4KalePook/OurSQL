@@ -41,7 +41,8 @@ public class DBTable {
 		}
 
 		if(!createTable.getPK().equals("")){
-			this.addIndex("primary_key", createTable.getPK());
+			primaryKey = createTable.getPK();
+			this.addIndex("primary_key", primaryKey);
 			//TODO: edit the code for following reason: primary_key may not exist, (check the sample).
 		}
 
