@@ -168,7 +168,7 @@ public class DBTable {
 	}
 	
 	public boolean updateSelf(List<DBObject> rows, String columnName, DBTypes value){
-		System.err.println(rows.size() + "!@#$");
+//		System.err.println(rows.size() + "!@#$");
 		for(DBObject row: rows){
 			//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
 			if(!updateRow(row, value, columnName))
@@ -178,7 +178,7 @@ public class DBTable {
 	}
 	
 	public boolean updateSelf(List<DBObject> rows, String columnName, String valueClause){
-		System.err.println(rows.size() + "!@#$");
+//		System.err.println(rows.size() + "!@#$");
 		for(DBObject row: rows){
 			DBTypes value = getNewVal(row, columnName, valueClause);
 	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
