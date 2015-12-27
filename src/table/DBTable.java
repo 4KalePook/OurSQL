@@ -292,10 +292,8 @@ public class DBTable {
 	private boolean updateInvFK(DBTypes oldVal, DBTypes newVal)
 	{
 		for(String fk: fkInvTables)
-			if( database.getTable(fk).fkTables.get(createTable.getTableName()).onUpdate == Action.RESTRICT )
+			 if(!database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal))
 				return false;
-		for(String fk: fkInvTables)
-			database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal);
 		return true;
 	}
 	
@@ -326,12 +324,10 @@ public class DBTable {
 	
 	private boolean checkInvFKDelete(List<DBObject> rows){
 //		System.err.println(primaryKey);
-		for(String fk: fkInvTables)
-			if( database.getTable(fk).fkTables.get(createTable.getTableName()).onDelete == Action.RESTRICT )
-				return false;
 		for(DBObject row: rows)
 			for(String fk: fkInvTables)
-				database.getTable(fk).checkFKDelete(createTable.getTableName(), row.getField(primaryKey));
+				if(!database.getTable(fk).checkFKDelete(createTable.getTableName(), row.getField(primaryKey)))
+					return false;
 		return true;
 	}
 	
