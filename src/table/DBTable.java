@@ -163,8 +163,9 @@ public class DBTable {
 				String col = Name1+"."+key;
 				int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
 				Segment range = calc.calculate(whereClause, col,type);
-				if(range.getBegin().getValue().equals(range.getEnd().getValue())){
-					rows1=getRowByIndex(key,range.getBegin().getValue()); 
+				if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
+					if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+						rows1=getRowByIndex(key,range.getBegin().getValue()); 
 					break;
 				}
 			}
@@ -176,10 +177,11 @@ public class DBTable {
 				String col = Name2+"."+key;
 				int type=(table2.schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
 				Segment range = calc.calculate(whereClause, col,type);
-				if(range.getBegin().getValue().equals(range.getEnd().getValue())){
-					rows2=table2.getRowByIndex(key,range.getBegin().getValue()); 
-					break;
-				}
+				if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
+					if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+						rows2=table2.getRowByIndex(key,range.getBegin().getValue()); 
+						break;
+					}
 			}
 			
 			
@@ -218,10 +220,11 @@ public class DBTable {
 				String col = Name1+"."+key;
 				int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
 				Segment range = calc.calculate(whereClause, col,type);
-				if(range.getBegin().getValue().equals(range.getEnd().getValue())){
-					rows1=getRowByIndex(key,range.getBegin().getValue()); //TODO check
-					break;
-				}
+				if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
+					if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+						rows1=getRowByIndex(key,range.getBegin().getValue()); //TODO check
+						break;
+					}
 			}
 			
 			for(DBObject row1 : tableObjects){	//TODO make sure this is the correct order for the result
