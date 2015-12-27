@@ -124,10 +124,11 @@ public class DBTable {
 			int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
 			Segment range = calc.calculate(whereClause, key,type);
 			System.err.println(range);
-			if(range.getBegin().getValue().equals(range.getEnd().getValue())){
-				rows=getRowByIndex(key,range.getBegin().getValue()); //TODO check
-				break;
-			}
+			if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
+				if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+					rows=getRowByIndex(key,range.getBegin().getValue()); //TODO check
+					break;
+				}
 		}
 		for(DBObject row : rows){	//TODO make sure this is the correct order for the result
 			ConditionCalc calc=new ConditionCalc(row);
