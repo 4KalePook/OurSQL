@@ -135,6 +135,7 @@ public class DBTable {
 			return result;
 		}else{
 			List<DBObject> result = new LinkedList<DBObject>();
+			System.err.println(Name2);
 			String fkcol = fkTables.get(Name2).columnName;
 			for(DBObject row2 : table2.tableObjects){	//TODO make sure this is the correct order for the result
 				String col=table2.primaryKey;	
