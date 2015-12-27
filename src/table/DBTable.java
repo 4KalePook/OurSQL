@@ -272,6 +272,12 @@ public class DBTable {
 	
 	public boolean updateRow(DBObject row, DBTypes newVal, String columnName){
 		DBTypes oldVal = row.getField(columnName);
+		if(columnName.equals(primaryKey))
+		      if( checkPKValueExists(newVal) ) {
+		    	  System.out.println(C1Constraint.Message);
+		          return true;
+		      }
+		
 		row.updateField(columnName, newVal);
 		if(columnName.equals(primaryKey))
 			updateInvFK(oldVal, newVal);
