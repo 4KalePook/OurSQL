@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 
 import database.Database;
 import dbTypes.DBTypes;
+import errors.Constraint;
 import table.DBTable;
 
 public class InsertType extends ParserTypes {
@@ -78,7 +79,12 @@ public class InsertType extends ParserTypes {
 			String  stringValue = itStringValues.next();
 			values.add(type.toValue(stringValue));
 		}
-		database.insert(tableName,values);
+		try{
+			database.insert(tableName,values);
+		}
+		catch(Constraint c){
+			return c.message();
+		}
 		return "RECORD INSERTED";
 	}
 	
