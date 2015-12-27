@@ -99,11 +99,11 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 				return new Segment(new SegmentPoint(new INT 
 						  (IntCompVal(sub.substring(2, sub.length() ) )), false),new SegmentPoint());
 			if(sub.startsWith(">") )
-				return new Segment(new SegmentPoint(), new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(1, sub.length() ) )), false));
-			if(sub.startsWith("<"))
 				return new Segment(new SegmentPoint(new INT 
 						  (IntCompVal(sub.substring(1, sub.length() ) )), false),new SegmentPoint());
+			if(sub.startsWith("<"))
+				return new Segment(new SegmentPoint(), new SegmentPoint(new INT 
+						  (IntCompVal(sub.substring(1, sub.length() ) )), false));
 			if(sub.startsWith("="))
 				return new Segment(new SegmentPoint(new INT 
 						  (IntCompVal(sub.substring(1, sub.length() ) )), false), new SegmentPoint(new INT 
