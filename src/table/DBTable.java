@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.sun.org.apache.bcel.internal.generic.SWAP;
+
 import database.Database;
 import dbTypes.DBTypes;
 import dbTypes.INT;
@@ -135,6 +137,11 @@ public class DBTable {
 			
 			return result;
 		}else{
+			
+			if(fkTables.get(Name2)==null){
+				return table2.selectRows(Name2,Name1,this,whereClause,isjoin);
+			}
+			
 			List<DBObject> result = new LinkedList<DBObject>();
 			System.err.println(Name2);
 			String fkcol = fkTables.get(Name2).columnName;
