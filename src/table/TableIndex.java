@@ -30,6 +30,15 @@ public class TableIndex<T> {
 		if( index.get(key).isEmpty() )
 			index.remove(key);
 	}
+	public void updateIndex(T oldKey, T newKey){
+		if( !index.containsKey(newKey) )
+			index.put(newKey, new ArrayList<DBObject>());
+		//TODO: merge two index set index.get(key);
+	}
+
+	public void updateIndex(T oldKey, T newKey, DBObject newVal){
+		//TODO: update Index of this Obj
+	}
 	
 	public Set<Map.Entry<T, ArrayList<DBObject>>> getFirst(T key) {
 		return getFirst(key, true);

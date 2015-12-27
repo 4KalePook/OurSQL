@@ -245,6 +245,17 @@ public class DBTable {
 			return result;
 		}
 	}
+	
+	
+	public void updateAllIndex(String indexName, DBTypes oldVal, DBTypes newVal){
+		TableIndex<DBTypes> index=indices.get(indexName);
+		index.updateIndex(oldVal, newVal);
+	}
+	public void updateRowIndex(String indexName, DBTypes oldVal, DBTypes newVal, DBObject row){
+		TableIndex<DBTypes> index=indices.get(indexName);
+		index.updateIndex(oldVal, newVal, row);
+	}
+
 	public boolean update(String columnName,String valueClause,String whereClause){
 		List<DBObject> rows= selectRows(whereClause);
 		return updateSelf(rows, columnName, valueClause);
@@ -259,6 +270,8 @@ public class DBTable {
 			updateRow(row, value, columnName);
 //				return false;
  		}
+ 		
+ 		
 	}
 	
 	public boolean updateSelf(List<DBObject> rows, String columnName, String valueClause){ //this function called once
@@ -268,8 +281,10 @@ public class DBTable {
 		for(DBObject row: rows){
 			DBTypes value = getNewVal(row, columnName, valueClause);
 	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
+			DBTypes oldVal = row.getField(columnName);
 			if(!updateRow(row, value, columnName))
 				return true;
+			updateRowIndex(columnName, oldVal, value, row);
 		}
 		return true;
 	}
@@ -354,6 +369,7 @@ public class DBTable {
 		ForeignKey fk = fkTables.get(tableName);
 		List<DBObject> rows = getRowByIndex(fk.columnName, oldVal);
 		updateSelf(rows, fk.columnName, newVal);
+		updateAllIndex(fk.columnName, oldVal, newVal);
 	}
 	
 	private void updateInvFK(DBTypes oldVal, DBTypes newVal)
