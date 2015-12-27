@@ -87,7 +87,7 @@ public class Database {
 				}
 				
 				DBTypes value = row.getField(name+"."+col);
-				if(value==null && name.equals("")){
+				if(value==null){
 					value= row.getField(col);
 				}
 				if(!first)
