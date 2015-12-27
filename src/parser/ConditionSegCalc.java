@@ -110,7 +110,7 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 						  (IntCompVal(sub.substring(1, sub.length() ) )), false));
 		}
 		//if we reach this point this means the string isn't a standard tuple condition
-		System.err.println("(Err)Not a standard Tupple Condition\n <"+tuple+">");
+		System.err.println("(Err)Not a standard Tupple Condition\n <"+tuple+">: ["+ColName+"]+["+sub+"] type:"+type);
 		if(type==0)
 			return empty_varchar;
 		else

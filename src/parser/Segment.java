@@ -35,8 +35,14 @@ class SegmentPoint {
 public class Segment {
 	public SegmentPoint begin, end;
 	public void Print(){
-		System.err.println(begin.getValue());
-		System.err.println(end.getValue().getValue());
+		if(begin.getValue()!=null)
+			System.err.println(begin.getValue().getValue());
+		else
+			System.err.println(begin.getValue());
+		if(end.getValue()!=null)
+			System.err.println(end.getValue().getValue());
+		else
+			System.err.println(end.getValue());
 	}
 	
 	Segment(SegmentPoint begin, SegmentPoint end) {
