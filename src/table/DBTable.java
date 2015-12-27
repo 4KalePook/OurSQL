@@ -150,6 +150,7 @@ public class DBTable {
 				DBTypes value = row2.getField(col);
 				
 				Set<Map.Entry<DBTypes, DBObject>> seg= indices.get(fkcol).getSegment(value, true, value, true);
+				//TODO Multi-Set
 				for(Map.Entry<DBTypes, DBObject> entry : seg){	//TODO make sure this is the correct order for the result
 					DBObject row1=entry.getValue();
 					ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);
