@@ -5,9 +5,9 @@ import dbTypes.*;
 
 public class ConditionSegCalc {
 	
-	Segment inf = new Segment(new SegmentPoint(), new SegmentPoint());
+	Segment inf = new Segment(new SegmentPoint(false), new SegmentPoint(true));
 	Segment empty_varchar = new Segment(new SegmentPoint(new VARCHAR (""), false), new SegmentPoint(new VARCHAR (""), false) );
-	Segment empty_int = new Segment(new SegmentPoint(), new SegmentPoint());
+	Segment empty_int = new Segment(new SegmentPoint(false), new SegmentPoint(true));
 	
 	private boolean tables;	//more than one table then is true
 	private String table_name1, table_name2;
@@ -73,18 +73,18 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 		String sub = Clean(tuple.substring(i,tuple.length()));
 		if(type == 0){
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
-				return new Segment(new SegmentPoint(), new SegmentPoint(new VARCHAR 
-						  (StrCompVal(sub.substring(2, sub.length() ) )), false));
+				return new Segment(new SegmentPoint(false), new SegmentPoint(new VARCHAR 
+						  (StrCompVal(sub.substring(2, sub.length() ) )), true));
 			}
 			if(sub.startsWith(">=") || sub.startsWith("=>") )
 				return new Segment(new SegmentPoint(new VARCHAR 
-					   (StrCompVal(sub.substring(2, sub.length() ) )), false),new SegmentPoint());
+					   (StrCompVal(sub.substring(2, sub.length() ) )), true),new SegmentPoint(true));
 			if(sub.startsWith("<") )
-				return new Segment(new SegmentPoint(), new SegmentPoint(new VARCHAR 
+				return new Segment(new SegmentPoint(false), new SegmentPoint(new VARCHAR 
 						  (StrCompVal(sub.substring(1, sub.length() ) )), false));				
 			if(sub.startsWith(">") )
 				return new Segment(new SegmentPoint(new VARCHAR 
-						   (StrCompVal(sub.substring(1, sub.length() ) )), false),new SegmentPoint());
+						   (StrCompVal(sub.substring(1, sub.length() ) )), false),new SegmentPoint(true));
 			if(sub.startsWith("="))
 				return new Segment(new SegmentPoint(new VARCHAR 
 						  (StrCompVal(sub.substring(1, sub.length() ) )), false), new SegmentPoint(new VARCHAR 
@@ -93,16 +93,16 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 		if(type == 1){
 			sub = Clean(sub);
 			if(sub.startsWith("<=") || sub.startsWith("=<"))
-				return new Segment(new SegmentPoint(), new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(2, sub.length() ) )), false));				
+				return new Segment(new SegmentPoint(false), new SegmentPoint(new INT 
+						  (IntCompVal(sub.substring(2, sub.length() ) )), true));				
 			if(sub.startsWith(">=") || sub.startsWith("=>"))
 				return new Segment(new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(2, sub.length() ) )), false),new SegmentPoint());
+						  (IntCompVal(sub.substring(2, sub.length() ) )), true),new SegmentPoint(true));
 			if(sub.startsWith(">") )
 				return new Segment(new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(1, sub.length() ) )), false),new SegmentPoint());
+						  (IntCompVal(sub.substring(1, sub.length() ) )), false),new SegmentPoint(true));
 			if(sub.startsWith("<"))
-				return new Segment(new SegmentPoint(), new SegmentPoint(new INT 
+				return new Segment(new SegmentPoint(false), new SegmentPoint(new INT 
 						  (IntCompVal(sub.substring(1, sub.length() ) )), false));
 			if(sub.startsWith("="))
 				return new Segment(new SegmentPoint(new INT 
@@ -158,6 +158,10 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 	public long IntCompVal(String comp){
 		comp = Clean(comp);
 		int i = 0;
+		int sign = 1;
+		if(comp.startsWith("-")){
+			i++;
+		}
 		int numb = 0;
 		while(i<comp.length()&& is_digit(comp.charAt(i))){
 			numb*=10;
@@ -165,9 +169,9 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 			i++;
 		}
 		if(i==comp.length())
-			return numb;
+			return sign * numb;
 		if(i!=0)
-			return inIntCompVal(numb, comp.substring(i, comp.length()));
+			return inIntCompVal(sign * numb, comp.substring(i, comp.length()));
 		
 		
 		///////////////////////////

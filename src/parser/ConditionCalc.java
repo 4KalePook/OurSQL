@@ -177,6 +177,10 @@ public class ConditionCalc {
 	public long IntCompVal(String comp){
 		comp = Clean(comp);
 		int i = 0;
+		int sign = 1;
+		if(comp.startsWith("-")){
+			i++;
+		}
 		int numb = 0;
 		while(i<comp.length()&& is_digit(comp.charAt(i))){
 			numb*=10;
@@ -184,9 +188,9 @@ public class ConditionCalc {
 			i++;
 		}
 		if(i==comp.length())
-			return numb;
+			return sign * numb;
 		if(i!=0)
-			return inIntCompVal(numb, comp.substring(i, comp.length()));
+			return inIntCompVal(sign * numb, comp.substring(i, comp.length()));
 		// if we reach this point this means the (int)compare starts with a field
 		// i == 0
 		int j=0;
