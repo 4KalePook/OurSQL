@@ -16,6 +16,9 @@ import database.Database;
 import dbTypes.DBTypes;
 import dbTypes.INT;
 import dbTypes.VARCHAR;
+import errors.C1Constraint;
+import errors.C2Constraint;
+import errors.Constraint;
 import parser.ConditionCalc;
 import parser.CreateTableType;
 import parser.Segment;
@@ -76,7 +79,7 @@ public class DBTable {
 			index.insert(obj.getField(columnName), obj);
 	}
 	
-	public void insertRow(List<DBTypes> values) {
+	public void insertRow(List<DBTypes> values) throws Constraint {
 		// TODO: check types before adding
 		DBObject row = new DBObject();
 		for(int i=0; i<createTable.getNames().size(); i++)
@@ -88,22 +91,16 @@ public class DBTable {
 //		this.schema = schema;
 //	}
 	
-	public void insertRow(DBObject row)
+	public void insertRow(DBObject row) throws Constraint
 	{ 
-		if( primaryKey != null && !primaryKey.equals("") && checkPKValueExists(row.getField(primaryKey)) ) {
-			// TODO: error statement?
-			System.err.println("duplicate Primary Key detected");
-			return;
-		}
+		if( primaryKey != null && !primaryKey.equals("") && checkPKValueExists(row.getField(primaryKey)) )
+			throw new C1Constraint();
 		
 		for(Map.Entry<String, ForeignKey> entry : fkTables.entrySet()) {
 			ForeignKey fk = entry.getValue();
+
 			if( !database.getTable(fk.tableName).checkPKValueExists(row.getField(fk.columnName)) )
-			{
-				System.err.println("foreign key constraint not satisfied. row: "
-					+ fk.columnName + " table:" + fk.tableName);
-				return;
-			}
+				throw new C2Constraint();
 		}
 		
 		tableObjects.add(row);

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import dbTypes.DBTypes;
+import errors.Constraint;
 import table.DBObject;
 import table.DBTable;
 
@@ -99,7 +100,7 @@ public class Database {
 		
 	}
 	
-	public void insert(String tableName, List<DBTypes> values){
+	public void insert(String tableName, List<DBTypes> values) throws Constraint{
 		tables.get(tableName).insertRow(values);
 	}
 }
