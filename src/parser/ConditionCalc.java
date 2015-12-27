@@ -6,6 +6,8 @@ import dbTypes.VARCHAR;
 import table.*;
 
 public class ConditionCalc {
+	public static final int TYPE_VARCHAR = 0;
+	public static final int TYPE_INT = 1;
 	
 	private DBObject mydb;
 	private DBObject mydb2;
@@ -80,7 +82,7 @@ public class ConditionCalc {
 		else
 			type = getType(ColName, (table_name.equals(table_name1)?1:2));
 		String sub = Clean(tuple.substring(i,tuple.length()));
-		if(type == 0){
+		if(type == TYPE_VARCHAR){
 			String value = getStrValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2));
 			System.err.println(value);
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
@@ -95,7 +97,7 @@ public class ConditionCalc {
 			if(sub.startsWith("="))
 				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) == 0;
 		}
-		if(type == 1){
+		if(type == TYPE_INT){
 			long value = getIntValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2));
 			sub = Clean(sub);
 			if(sub.startsWith("<=") || sub.startsWith("=<"))
@@ -278,9 +280,9 @@ public class ConditionCalc {
 		if(!myrow.containsKey(a))
 			System.err.println(a+" isn't in hash map");
 		if(myrow.get(a).getClass().equals(VARCHAR.class))
-			return 0;
+			return TYPE_VARCHAR;
 		else
-			return 1;
+			return TYPE_INT;
 			
 	}
 	
@@ -290,16 +292,16 @@ public class ConditionCalc {
 			if(!myrow.containsKey(a))
 				System.err.println(a+" isn't in hash map");
 			if(myrow.get(a).getClass().equals(VARCHAR.class))
-			return 0;
+			return TYPE_VARCHAR;
 		else
-			return 1;
+			return TYPE_INT;
 		}else{
 			if(!myrow2.containsKey(a))
 				System.err.println(a+" isn't in hash map");
 			if(myrow2.get(a).getClass().equals(VARCHAR.class))
-				return 0;
+				return TYPE_VARCHAR;
 			else
-				return 1;
+				return TYPE_INT;
 		}
 			
 	}

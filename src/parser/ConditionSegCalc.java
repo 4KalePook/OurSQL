@@ -72,7 +72,7 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 			return inf;
 		
 		String sub = Clean(tuple.substring(i,tuple.length()));
-		if(type == 0){
+		if(type == ConditionCalc.TYPE_VARCHAR){
 			String Calc = null;
 			if(sub.startsWith("<=")||sub.startsWith(">="))
 				Calc = StrCompVal(sub.substring(2, sub.length() ) );
@@ -93,7 +93,7 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 				return new Segment(new SegmentPoint(new VARCHAR(Calc), true),
 									new SegmentPoint(new VARCHAR(Calc), true));				
 		}
-		if(type == 1){
+		if(type == ConditionCalc.TYPE_INT){
 			sub = Clean(sub);
 			long Calc = Null;
 			if(sub.startsWith("<=")||sub.startsWith(">="))
