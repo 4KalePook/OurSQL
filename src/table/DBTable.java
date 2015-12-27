@@ -11,6 +11,7 @@ import java.util.Set;
 import javax.sound.midi.SysexMessage;
 
 
+
 import database.Database;
 import dbTypes.DBTypes;
 import dbTypes.INT;
@@ -19,11 +20,12 @@ import errors.C1Constraint;
 import errors.C2Constraint;
 import errors.Constraint;
 import parser.ConditionCalc;
+import parser.ConditionSegCalc;
 import parser.CreateTableType;
 import parser.Segment;
 
 public class DBTable {
-	Database database;
+    Database database;
 	LinkedList<DBObject> tableObjects;
 	HashMap<String, TableIndex<DBTypes> > indices;
 	String primaryKey;
@@ -113,10 +115,25 @@ public class DBTable {
 
 	public List<DBObject> selectRows(String whereClause){
 		List<DBObject> result = new LinkedList<DBObject>();
-		for(DBObject row : tableObjects){	//TODO make sure this is the correct order for the result
+		
+
+		List<DBObject> rows=tableObjects;
+		
+		for(String key: indices.keySet()){
+			ConditionSegCalc calc=new ConditionSegCalc();
+			int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
+			Segment range = calc.calculate(whereClause, key,type);
+			System.err.println(range);
+			if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+				rows=getRowByIndex(key,range.getBegin().getValue()); //TODO check
+				break;
+			}
+		}
+		for(DBObject row : rows){	//TODO make sure this is the correct order for the result
 			ConditionCalc calc=new ConditionCalc(row);
 			if(calc.calculate(whereClause)){   //TODO
 				result.add(row);
+				
 			}
 		}
 		return result;
@@ -137,9 +154,38 @@ public class DBTable {
 		}
 		if(!isjoin){
 			List<DBObject> result = new LinkedList<DBObject>();
-			for(DBObject row1 : tableObjects){	//TODO make sure this is the correct order for the result
+			
+			List<DBObject> rows1=tableObjects;
+			
+			for(String key: indices.keySet()){
+				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
+				String col = Name1+"."+key;
+				int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
+				Segment range = calc.calculate(whereClause, col,type);
+				if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+					rows1=getRowByIndex(key,range.getBegin().getValue()); 
+					break;
+				}
+			}
+			
+			List<DBObject> rows2=table2.tableObjects;
+			
+			for(String key: table2.indices.keySet()){
+				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
+				String col = Name2+"."+key;
+				int type=(table2.schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
+				Segment range = calc.calculate(whereClause, col,type);
+				if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+					rows2=table2.getRowByIndex(key,range.getBegin().getValue()); 
+					break;
+				}
+			}
+			
+			
+			
+			for(DBObject row1 : rows1){	//TODO make sure this is the correct order for the result
 				
-				for(DBObject row2 : table2.tableObjects){	//TODO make sure this is the correct order for the result
+				for(DBObject row2 : rows2){	//TODO make sure this is the correct order for the result
 					ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);
 //					System.err.println(row1.toString());
 //					System.err.println(row2.toString());
@@ -159,19 +205,34 @@ public class DBTable {
 				return table2.selectRows(Name2,Name1,this,whereClause,isjoin);
 			}
 			
+		
 			List<DBObject> result = new LinkedList<DBObject>();
 			System.err.println(Name2);
 			String fkcol = fkTables.get(Name2).columnName;
-			for(DBObject row2 : table2.tableObjects){	//TODO make sure this is the correct order for the result
-				String col=table2.primaryKey;	
-				DBTypes value = row2.getField(col);
+			
+			List<DBObject> rows1=tableObjects;
+			
+			for(String key: indices.keySet()){
+				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
+				String col = Name1+"."+key;
+				int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
+				Segment range = calc.calculate(whereClause, col,type);
+				if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+					rows1=getRowByIndex(key,range.getBegin().getValue()); //TODO check
+					break;
+				}
+			}
+			
+			for(DBObject row1 : tableObjects){	//TODO make sure this is the correct order for the result
+				String pkcol=table2.primaryKey;	
+				DBTypes value = row1.getField(fkcol);
 		
-				Set<Map.Entry<DBTypes, ArrayList<DBObject>>> seg= indices.get(fkcol).getSegment(value, true, value, true);
+				Set<Map.Entry<DBTypes, ArrayList<DBObject>>> seg= table2.indices.get(pkcol).getSegment(value, true, value, true);
 				for(Map.Entry<DBTypes, ArrayList<DBObject>> entry : seg){	//TODO make sure this is the correct order for the result
-					for(DBObject row : entry.getValue()) {
-						ConditionCalc calc=new ConditionCalc(row, row2, Name1, Name2);
+					for(DBObject row2 : entry.getValue()) {
+						ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);
 						if(calc.calculate(whereClause)){   //TODO
-							result.add(join(row,row2,Name1,Name2,false));
+							result.add(join(row1,row2,Name1,Name2,false));
 						}
 					}
 				}
@@ -185,22 +246,18 @@ public class DBTable {
 		return updateSelf(rows, columnName, valueClause);
 	}
 	
-	public void updateSelf(List<DBObject> rows, String columnName, DBTypes value){ //this function call recuresive
+	public boolean updateSelf(List<DBObject> rows, String columnName, DBTypes value){
 //		System.err.println(rows.size() + "!@#$");
-//		if(!checkInvFKUpdate(rows)) //check inv fk restricting ...
-//			return false;
 		for(DBObject row: rows){
-	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
-			updateRow(row, value, columnName);
-//				return false;
+			//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
+			if(!updateRow(row, value, columnName))
+				return false;
 		}
-//		return true;
+		return true;
 	}
 	
-	public boolean updateSelf(List<DBObject> rows, String columnName, String valueClause){ //this function called once
+	public boolean updateSelf(List<DBObject> rows, String columnName, String valueClause){
 //		System.err.println(rows.size() + "!@#$");
-		if(!checkInvFKUpdate(rows)) //check inv fk restricting ...
-			return false;
 		for(DBObject row: rows){
 			DBTypes value = getNewVal(row, columnName, valueClause);
 	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
@@ -212,11 +269,10 @@ public class DBTable {
 	
 	public boolean updateRow(DBObject row, DBTypes newVal, String columnName){
 		DBTypes oldVal = row.getField(columnName);
-		
-		//TODO:  check if c1 -> RETURN FALSE
 		row.updateField(columnName, newVal);
 		if(columnName.equals(primaryKey))
-			updateInvFK(oldVal, newVal);
+			if(!updateInvFK(oldVal, newVal))
+				return false;
 		return true;
 	}
 	public DBTypes getNewVal(DBObject row, String columnName, String valueClause){
@@ -280,17 +336,26 @@ public class DBTable {
 		return rows;
 	}
 	
-	public void updateFK(String tableName, DBTypes oldVal, DBTypes newVal)
+	public boolean updateFK(String tableName, DBTypes oldVal, DBTypes newVal)
 	{
 		ForeignKey fk = fkTables.get(tableName);
 		List<DBObject> rows = getRowByIndex(fk.columnName, oldVal);
-		updateSelf(rows, fk.columnName, newVal);
+		if(fk.onUpdate == Action.RESTRICT){
+			if(rows.size() > 0)
+				return false;
+			return true;
+		}
+		else{
+			return updateSelf(rows, fk.columnName, newVal);
+		}
 	}
 	
-	private void updateInvFK(DBTypes oldVal, DBTypes newVal)
+	private boolean updateInvFK(DBTypes oldVal, DBTypes newVal)
 	{
 		for(String fk: fkInvTables)
-			 database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal);
+			 if(!database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal))
+				return false;
+		return true;
 	}
 	
 	public boolean checkPKValueExists(DBTypes value){
@@ -299,33 +364,6 @@ public class DBTable {
 		if( getRowByIndex(primaryKey, value).size() == 1 )
 			return true;
 		return false;
-	}
-	
-	private boolean checkInvFKUpdate(List<DBObject> rows){
-//		System.err.println(primaryKey);
-		for(DBObject row: rows)
-			for(String fk: fkInvTables)
-				if(!database.getTable(fk).checkFKUpdate(createTable.getTableName(), row.getField(primaryKey)))
-					return false;
-		return true;
-	}
-	
-	public boolean checkFKUpdate(String tableName, DBTypes value)
-	{
-		ForeignKey fk = fkTables.get(tableName);
-		if(!fk.columnName.equals(primaryKey))
-			return true;
-		List<DBObject> rows = getRowByIndex(fk.columnName, value);
-//		System.err.println(fk.onDelete.name());
-//		System.err.println(fk.onUpdate.name());
-		if(fk.onUpdate == Action.RESTRICT){
-			if(rows.size() > 0)
-				return false;
-			return true;
-		}
-		else{
-			return checkInvFKUpdate(rows);
-		}
 	}
 	
 	public boolean checkFKDelete(String tableName, DBTypes value)
@@ -347,6 +385,7 @@ public class DBTable {
 	
 	private boolean checkInvFKDelete(List<DBObject> rows){
 //		System.err.println(primaryKey);
+
 		for(DBObject row: rows)
 			for(String fk: fkInvTables)
 				if(!database.getTable(fk).checkFKDelete(createTable.getTableName(), row.getField(primaryKey)))
