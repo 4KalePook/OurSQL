@@ -52,10 +52,19 @@ public class Database {
 		 * Displaying the header *
 		 *************************/
 		boolean first = true;
-		for(String columnName: columnNames){
+		for(String str: columnNames){
 			if(!first)
 				System.out.print(',');
-			System.out.print(columnName);
+			
+			String col;
+			if(str.indexOf(".")!=-1){
+				col=(str.substring(str.indexOf('.')+1));
+			}else{
+				col=str;
+			}
+			
+			System.out.print(col);
+			
 			first=false;
 		}
 		System.out.println();

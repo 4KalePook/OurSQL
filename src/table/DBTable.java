@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sound.midi.SysexMessage;
+
 import com.sun.org.apache.bcel.internal.generic.SWAP;
 
 import database.Database;
@@ -96,7 +98,7 @@ public class DBTable {
 		
 		for(Map.Entry<String, ForeignKey> entry : fkTables.entrySet()) {
 			ForeignKey fk = entry.getValue();
-			if( !database.getTable(fk.tableName).checkPKValueExists(row.getField(entry.getKey())) )
+			if( !database.getTable(fk.tableName).checkPKValueExists(row.getField(fk.columnName)) )
 			{
 				System.err.println("foreign key constraint not satisfied. row: "
 					+ fk.columnName + " table:" + fk.tableName);
