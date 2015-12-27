@@ -28,11 +28,12 @@ public class ConditionSegCalc {
 	
 	
 public Segment calculate(String tuple, String field_name ,int type){//Calculate Tuple Condition
+		System.err.println(tuple+"|"+ field_name+"|"+type);
 		tuple = Clean(tuple);
 		if(tuple.equals("FALSE"))
-			return null;
+			return (type==ConditionCalc.TYPE_INT?empty_int:empty_varchar);
 		if(tuple.equals("TRUE"))
-			return null;
+			return inf;
 		if(tuple.charAt(0)=='('){
 			int j = 0;
 			int depth = 1;
