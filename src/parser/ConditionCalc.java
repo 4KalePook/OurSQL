@@ -63,14 +63,14 @@ public class ConditionCalc {
 		// if we reach this point this means the tuple_condition starts with COL_NAME
 		int i=0;
 		int j=0;
-		while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
+		while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i))))
 			i++;
 		String table_name=table_name1;
-		if(tuple.charAt(i)=='.'){
+		if(i<tuple.length() && tuple.charAt(i)=='.'){
 			table_name = tuple.substring(0,i);
 			j=i+1;
 			i++;
-			while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
+			while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i))))
 				i++;
 		}
 		String ColName = tuple.substring(j,i);
@@ -144,7 +144,7 @@ public class ConditionCalc {
 		int i=0;
 		int j=0;
 		System.err.print(str);
-		while(i<str.length() && (is_letter(str.charAt(i)) ||  is_digit(str.charAt(i)))){
+		while(i<str.length() && (is_letter(str.charAt(i)) ||  is_digit(str.charAt(i) ) ) ){
 			System.err.println(str.length());
 			i++;
 		}
@@ -153,7 +153,7 @@ public class ConditionCalc {
 			table_name = str.substring(0,i);
 			j=i+1;
 			i++;
-			while(i<str.length() && is_letter(str.charAt(i)) ||  is_digit(str.charAt(i)))
+			while(i<str.length() && (is_letter(str.charAt(i)) ||  is_digit(str.charAt(i) ) ) )
 				i++;
 		}
 		String value = getStrValue(str.substring(j,i), ((tables==false||table_name.equals(table_name1))?1:2));
@@ -190,14 +190,14 @@ public class ConditionCalc {
 		// if we reach this point this means the (int)compare starts with a field
 		// i == 0
 		int j=0;
-		while(i<comp.length() && is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i)))
+		while(i<comp.length() && (is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i) ) ) )
 			i++;
 		String table_name=table_name1;
-		if(comp.charAt(i)=='.'){
+		if(i<comp.length() && comp.charAt(i)=='.'){
 			table_name = comp.substring(0,i);
 			j=i;
 			i++;
-			while(i<comp.length() && (is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i))))
+			while(i<comp.length() && (is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i) ) ) )
 				i++;
 		}
 		//System.err.println(table_name+" "+table_name1+" "+table_name2);
