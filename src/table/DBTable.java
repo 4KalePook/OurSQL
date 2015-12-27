@@ -49,6 +49,7 @@ public class DBTable {
 		// TODO: implement FK functionality
 		for(ForeignKey fk: createTable.getFKs())
 		{
+			fkTables.put(fk.tableName, fk);
 			this.addIndex(fk.columnName, fk.columnName);
 			database.getTable(fk.tableName).addInvFK(createTable.getTableName());
 		}
@@ -178,7 +179,7 @@ public class DBTable {
 	public boolean updateRow(DBObject row, DBTypes newVal, String columnName){
 		DBTypes oldVal = row.getField(columnName);
 		row.updateField(columnName, newVal);
-		if(columnName == primaryKey)
+		if(columnName.equals(primaryKey))
 			if(!updateInvFK(oldVal, newVal))
 				return false;
 		return true;
@@ -200,12 +201,12 @@ public class DBTable {
 		List<DBObject> rows= selectRows(whereClause);
 		if(!checkInvFKDelete(rows))
 		{
-			System.err.println("check on delete false!");
+//			System.err.println("check on delete false!");
 			return false;
 		}
-		System.err.println("check on delete ok!");
+//		System.err.println("check on delete ok!");
 		deleteInvFK(rows);
-		System.err.println("delete INVFK ok");
+//		System.err.println("delete INVFK ok");
 		deleteSelf(rows);
 		return true;
 	}
@@ -269,7 +270,10 @@ public class DBTable {
 	public boolean checkFKDelete(String tableName, DBTypes value)
 	{
 		ForeignKey fk = fkTables.get(tableName);
+		
 		List<DBObject> rows = getRowByIndex(fk.columnName, value);
+//		System.err.println(fk.onDelete.name());
+//		System.err.println(fk.onUpdate.name());
 		if(fk.onDelete == Action.RESTRICT){
 			if(rows.size() > 0)
 				return false;
@@ -281,10 +285,11 @@ public class DBTable {
 	}
 	
 	private boolean checkInvFKDelete(List<DBObject> rows){
-		
+//		System.err.println(primaryKey);
 		for(DBObject row: rows){
 			for(String fk: fkInvTables)
-				database.getTable(fk).checkFKDelete(createTable.getTableName(), row.getField(primaryKey));
+				if(!database.getTable(fk).checkFKDelete(createTable.getTableName(), row.getField(primaryKey)))
+					return false;
 		}
 		return true;
 	}

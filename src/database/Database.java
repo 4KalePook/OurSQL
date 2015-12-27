@@ -29,8 +29,8 @@ public class Database {
 		tables.get(tableName).update(columnName,valueClause,whereClause);
 	}
 	
-	public void deleteFrom(String tableName, String whereClause  ){
-		tables.get(tableName).delete(whereClause);
+	public boolean deleteFrom(String tableName, String whereClause  ){
+		return tables.get(tableName).delete(whereClause);
 	}
 	
 	public void selectFrom(String tableName1,String tableName2,List<String> columnNames, String whereClause, boolean isjoin  ){
