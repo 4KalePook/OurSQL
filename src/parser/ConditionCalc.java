@@ -197,9 +197,10 @@ public class ConditionCalc {
 			table_name = comp.substring(0,i);
 			j=i;
 			i++;
-			while(i<comp.length() && is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i)))
+			while(i<comp.length() && (is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i))))
 				i++;
 		}
+		//System.err.println(table_name+" "+table_name1+" "+table_name2);
 		long value = getIntValue(comp.substring(j,i), ((tables==false||table_name.equals(table_name1))?1:2) );
 		if(i==comp.length())
 			return value;
