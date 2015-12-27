@@ -1,6 +1,7 @@
 package table;
 
 import java.io.ObjectInputStream.GetField;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -85,6 +86,22 @@ public class DBTable {
 	
 	public void insertRow(DBObject row)
 	{ 
+		if( primaryKey != null && !primaryKey.equals("") && checkPKValueExists(row.getField(primaryKey)) ) {
+			// TODO: error statement?
+			System.err.println("duplicate Primary Key detected");
+			return;
+		}
+		
+		for(Map.Entry<String, ForeignKey> entry : fkTables.entrySet()) {
+			ForeignKey fk = entry.getValue();
+			if( !database.getTable(fk.tableName).checkPKValueExists(row.getField(entry.getKey())) )
+			{
+				System.err.println("foreign key constraint not satisfied. row: "
+					+ fk.columnName + " table:" + fk.tableName);
+				return;
+			}
+		}
+		
 		tableObjects.add(row);
 		for(String indexName: indices.keySet()) {
 			indices.get(indexName).insert(row.getField(indexName), row);
@@ -141,12 +158,13 @@ public class DBTable {
 				String col=table2.primaryKey;	
 				DBTypes value = row2.getField(col);
 				
-				Set<Map.Entry<DBTypes, DBObject>> seg= indices.get(fkcol).getSegment(value, true, value, true);
-				for(Map.Entry<DBTypes, DBObject> entry : seg){	//TODO make sure this is the correct order for the result
-					DBObject row1=entry.getValue();
-					ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);
-					if(calc.calculate(whereClause)){   //TODO
-						result.add(join(row1,row2,Name1,Name2,false));
+				Set<Map.Entry<DBTypes, ArrayList<DBObject>>> seg= indices.get(fkcol).getSegment(value, true, value, true);
+				for(Map.Entry<DBTypes, ArrayList<DBObject>> entry : seg){	//TODO make sure this is the correct order for the result
+					for(DBObject row : entry.getValue()) {
+						ConditionCalc calc=new ConditionCalc(row, row2, Name1, Name2);
+						if(calc.calculate(whereClause)){   //TODO
+							result.add(join(row,row2,Name1,Name2,false));
+						}
 					}
 				}
 				
@@ -220,7 +238,7 @@ public class DBTable {
 		for(String indexName : indices.keySet()){
 			TableIndex<DBTypes> index=indices.get(indexName);
 			for(DBObject row : rows){
-				index.remove(row.getField(indexName));
+				index.remove(row.getField(indexName), row);
 			}
 		}
 	}
@@ -241,10 +259,10 @@ public class DBTable {
 	public List<DBObject> getRowByIndex(String indexName, DBTypes value){
 		List<DBObject> rows = new LinkedList<DBObject>();
 		
-		Set<Map.Entry<DBTypes, DBObject>> seg= indices.get(indexName).getSegment(value, true, value, true);
-		for(Map.Entry<DBTypes, DBObject> entry : seg){	
-			rows.add(entry.getValue());
-		}
+		Set<Map.Entry<DBTypes, ArrayList<DBObject>>> seg= indices.get(indexName).getSegment(value, true, value, true);
+		for(Map.Entry<DBTypes, ArrayList<DBObject>> entry : seg)
+			for(DBObject row : entry.getValue())
+				rows.add(row);
 		
 		return rows;
 	}
@@ -269,6 +287,14 @@ public class DBTable {
 			if(!database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal))
 				return false;
 		return true;
+	}
+	
+	public boolean checkPKValueExists(DBTypes value){
+		if( primaryKey.equals("") || primaryKey == null )
+			return false;  // TODO: this means the FK can't insert anything!
+		if( getRowByIndex(primaryKey, value).size() == 1 )
+			return true;
+		return false;
 	}
 	
 	public boolean checkFKDelete(String tableName, DBTypes value)
