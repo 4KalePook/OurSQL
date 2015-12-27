@@ -10,7 +10,6 @@ import java.util.Set;
 
 import javax.sound.midi.SysexMessage;
 
-import com.sun.org.apache.bcel.internal.generic.SWAP;
 
 import database.Database;
 import dbTypes.DBTypes;
