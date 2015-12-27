@@ -265,7 +265,7 @@ public class DBTable {
 			DBTypes value = getNewVal(row, columnName, valueClause);
 	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
 			if(!updateRow(row, value, columnName))
-				return false;
+				return true;
 		}
 		return true;
 	}
