@@ -11,8 +11,6 @@ public class SelectType extends ParserTypes {
 	String tableName1;
 	String tableName2;
 	List<String> fullNames;
-	List<String> columnNames;
-	List<String> tableNames;
 	String whereClause;
 	boolean isjoin;
 
@@ -29,8 +27,6 @@ public class SelectType extends ParserTypes {
 	public SelectType() {
 		this.commandType = CommandTypes.SELECT;
 		fullNames= new LinkedList<String>();
-		columnNames= new LinkedList<String>();
-		tableNames= new LinkedList<String>();
 	}
 	
 	@Override
@@ -61,9 +57,7 @@ public class SelectType extends ParserTypes {
 				}
 			}
 		}
-		for(String str: fullNames){
-			
-		}
+	
 		if(scanner.hasNext()){
 			String rest=scanner.nextLine();
 			int begin= 0;
@@ -79,7 +73,7 @@ public class SelectType extends ParserTypes {
 
 	@Override
 	public String action(Database database) {
-		database.selectFrom(tableName1,tableName2, columnNames , whereClause,isjoin);
+		database.selectFrom(tableName1,tableName2, fullNames , whereClause,isjoin);
 		return null;
 	}
 	
