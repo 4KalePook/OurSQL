@@ -5,9 +5,10 @@ import dbTypes.*;
 
 public class ConditionSegCalc {
 	
-	Segment inf = new Segment(new SegmentPoint(), new SegmentPoint());
+	Segment inf = new Segment(new SegmentPoint(false), new SegmentPoint(true));
 	Segment empty_varchar = new Segment(new SegmentPoint(new VARCHAR (""), false), new SegmentPoint(new VARCHAR (""), false) );
-	Segment empty_int = new Segment(new SegmentPoint(), new SegmentPoint());
+	Segment empty_int = new Segment(new SegmentPoint(new INT((long)0),false), new SegmentPoint(new INT((long)0),false));
+	private final static long Null = -2029391002;
 	
 	private boolean tables;	//more than one table then is true
 	private String table_name1, table_name2;
@@ -56,14 +57,14 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 		// if we reach this point this means the tuple_condition starts with COL_NAME
 		int i=0;
 		int j=0;
-		while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
+		while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i) ) ) )
 			i++;
 		String table_name=table_name1;
-		if(tuple.charAt(i)=='.'){
+		if(i<tuple.length() && tuple.charAt(i)=='.'){
 			table_name = tuple.substring(0,i);
 			j=i+1;
 			i++;
-			while(i<tuple.length() && is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i)))
+			while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i) ) ) )
 				i++;
 		}
 		String ColName = tuple.substring(j,i);
@@ -72,45 +73,50 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 		
 		String sub = Clean(tuple.substring(i,tuple.length()));
 		if(type == 0){
-			if(sub.startsWith("<=") || sub.startsWith("=<") ){
-				return new Segment(new SegmentPoint(), new SegmentPoint(new VARCHAR 
-						  (StrCompVal(sub.substring(2, sub.length() ) )), false));
-			}
+			String Calc = null;
+			if(sub.startsWith("<=")||sub.startsWith(">="))
+				Calc = StrCompVal(sub.substring(2, sub.length() ) );
+			if(sub.startsWith("<")||sub.startsWith(">")||sub.startsWith("="))
+				Calc = StrCompVal(sub.substring(1, sub.length() ) );
+			if(Calc == null)
+				return inf;
+			
+			if(sub.startsWith("<=") || sub.startsWith("=<") )
+				return new Segment(new SegmentPoint(false), new SegmentPoint(new VARCHAR(Calc), true));
 			if(sub.startsWith(">=") || sub.startsWith("=>") )
-				return new Segment(new SegmentPoint(new VARCHAR 
-					   (StrCompVal(sub.substring(2, sub.length() ) )), false),new SegmentPoint());
+				return new Segment(new SegmentPoint(new VARCHAR(Calc), true),new SegmentPoint(true));
 			if(sub.startsWith("<") )
-				return new Segment(new SegmentPoint(), new SegmentPoint(new VARCHAR 
-						  (StrCompVal(sub.substring(1, sub.length() ) )), false));				
+				return new Segment(new SegmentPoint(false), new SegmentPoint(new VARCHAR(Calc), false));				
 			if(sub.startsWith(">") )
-				return new Segment(new SegmentPoint(new VARCHAR 
-						   (StrCompVal(sub.substring(1, sub.length() ) )), false),new SegmentPoint());
+				return new Segment(new SegmentPoint(new VARCHAR(Calc), false),new SegmentPoint(true));
 			if(sub.startsWith("="))
-				return new Segment(new SegmentPoint(new VARCHAR 
-						  (StrCompVal(sub.substring(1, sub.length() ) )), false), new SegmentPoint(new VARCHAR 
-						  (StrCompVal(sub.substring(1, sub.length() ) )), false));				
+				return new Segment(new SegmentPoint(new VARCHAR(Calc), true),
+									new SegmentPoint(new VARCHAR(Calc), true));				
 		}
 		if(type == 1){
 			sub = Clean(sub);
-			if(sub.startsWith("<=") || sub.startsWith("=<"))
-				return new Segment(new SegmentPoint(), new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(2, sub.length() ) )), false));				
-			if(sub.startsWith(">=") || sub.startsWith("=>"))
-				return new Segment(new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(2, sub.length() ) )), false),new SegmentPoint());
+			long Calc = Null;
+			if(sub.startsWith("<=")||sub.startsWith(">="))
+				Calc = IntCompVal(sub.substring(2, sub.length() ) );
+			if(sub.startsWith("<")||sub.startsWith(">")||sub.startsWith("="))
+				Calc = IntCompVal(sub.substring(1, sub.length() ) );
+			if(Calc == Null)
+				return inf;
+			
+			if(sub.startsWith("<=") || sub.startsWith("=<") )
+				return new Segment(new SegmentPoint(false), new SegmentPoint(new INT(Calc), true));
+			if(sub.startsWith(">=") || sub.startsWith("=>") )
+				return new Segment(new SegmentPoint(new INT(Calc), true),new SegmentPoint(true));
+			if(sub.startsWith("<") )
+				return new Segment(new SegmentPoint(false), new SegmentPoint(new INT(Calc), false));				
 			if(sub.startsWith(">") )
-				return new Segment(new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(1, sub.length() ) )), false),new SegmentPoint());
-			if(sub.startsWith("<"))
-				return new Segment(new SegmentPoint(), new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(1, sub.length() ) )), false));
+				return new Segment(new SegmentPoint(new INT(Calc), false),new SegmentPoint(true));
 			if(sub.startsWith("="))
-				return new Segment(new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(1, sub.length() ) )), false), new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(1, sub.length() ) )), false));
+				return new Segment(new SegmentPoint(new INT(Calc), true),
+									new SegmentPoint(new INT(Calc), true));
 		}
 		//if we reach this point this means the string isn't a standard tuple condition
-		System.err.println("(Err)Not a standard Tupple Condition\n <"+tuple+">");
+		System.err.println("(Err)Not a standard Tupple Condition\n <"+tuple+">: ["+ColName+"]+["+sub+"] type:"+type);
 		if(type==0)
 			return empty_varchar;
 		else
@@ -158,6 +164,10 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 	public long IntCompVal(String comp){
 		comp = Clean(comp);
 		int i = 0;
+		int sign = 1;
+		if(comp.startsWith("-")){
+			i++;
+		}
 		int numb = 0;
 		while(i<comp.length()&& is_digit(comp.charAt(i))){
 			numb*=10;
@@ -165,13 +175,13 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 			i++;
 		}
 		if(i==comp.length())
-			return numb;
+			return sign * numb;
 		if(i!=0)
-			return inIntCompVal(numb, comp.substring(i, comp.length()));
+			return inIntCompVal(sign * numb, comp.substring(i, comp.length()));
 		
 		
 		///////////////////////////
-		return -1;
+		return Null;
 	}
 	
 	private long inIntCompVal(long numb, String incomp){

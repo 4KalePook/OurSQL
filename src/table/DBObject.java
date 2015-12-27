@@ -10,7 +10,6 @@ public class DBObject {
 		this.dataSet = dataSet;
 	}
 	
-	
 	public DBObject() {
 		this.dataSet = new HashMap<String, DBTypes>();
 	}
@@ -42,5 +41,15 @@ public class DBObject {
 	
 	public HashMap<String, DBTypes> getRow(){
 		return dataSet;
+	}
+	
+	@Override
+	public boolean equals(Object obj){
+		if( !(obj instanceof DBObject) )
+			return false;
+		if( obj == this )
+			return true;
+		// TODO: check if we can have duplicates
+		return false;
 	}
 }
