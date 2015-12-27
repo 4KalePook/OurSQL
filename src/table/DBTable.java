@@ -208,10 +208,10 @@ public class DBTable {
 	
 	public boolean updateRow(DBObject row, DBTypes newVal, String columnName){
 		DBTypes oldVal = row.getField(columnName);
-		row.updateField(columnName, newVal);
 		if(columnName.equals(primaryKey))
 			if(!updateInvFK(oldVal, newVal))
 				return false;
+		row.updateField(columnName, newVal);
 		return true;
 	}
 	public DBTypes getNewVal(DBObject row, String columnName, String valueClause){
@@ -292,8 +292,10 @@ public class DBTable {
 	private boolean updateInvFK(DBTypes oldVal, DBTypes newVal)
 	{
 		for(String fk: fkInvTables)
-			if(!database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal))
+			if( database.getTable(fk).fkTables.get(createTable.getTableName()).onUpdate == Action.RESTRICT )
 				return false;
+		for(String fk: fkInvTables)
+			database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal);
 		return true;
 	}
 	
@@ -324,11 +326,12 @@ public class DBTable {
 	
 	private boolean checkInvFKDelete(List<DBObject> rows){
 //		System.err.println(primaryKey);
-		for(DBObject row: rows){
+		for(String fk: fkInvTables)
+			if( database.getTable(fk).fkTables.get(createTable.getTableName()).onDelete == Action.RESTRICT )
+				return false;
+		for(DBObject row: rows)
 			for(String fk: fkInvTables)
-				if(!database.getTable(fk).checkFKDelete(createTable.getTableName(), row.getField(primaryKey)))
-					return false;
-		}
+				database.getTable(fk).checkFKDelete(createTable.getTableName(), row.getField(primaryKey));
 		return true;
 	}
 	
