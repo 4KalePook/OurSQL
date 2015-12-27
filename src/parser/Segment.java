@@ -2,12 +2,20 @@ package parser;
 
 import dbTypes.DBTypes;
 
-class SegmentPoint {
-	private boolean isInf, isInc;
+class SegmentPoint implements Comparable<SegmentPoint> {
+	private boolean isInf, positiveInf, isInc;
 	private DBTypes value;
 	
 	public boolean isInfinity() {
 		return isInf;
+	}
+	
+	public boolean posInfinity() {
+		return isInf && positiveInf;
+	}
+	
+	public boolean negInfinity() {
+		return isInf && (!positiveInf);
 	}
 	
 	public boolean isInclusive(){
@@ -20,14 +28,49 @@ class SegmentPoint {
 	
 	public SegmentPoint(DBTypes value, boolean isInclusive) {
 		this.isInf = false;
+		this.positiveInf = false;
 		this.isInc = isInclusive;
 		this.value = value;
 	}
 	
-	public SegmentPoint() {
+	public SegmentPoint(boolean positive) {
 		this.isInf = true;
+		this.positiveInf = positive;
 		this.value = null;
 		this.isInc = false;
+	}
+	
+	@Override
+	public int compareTo(SegmentPoint other) {
+		if( posInfinity() || other.posInfinity() ) {
+			if( !posInfinity() )
+				return -1;
+			if( !other.posInfinity() )
+				return 1;
+			return 0;
+		}
+		
+		if( negInfinity() || other.negInfinity() ) {
+			if( !negInfinity() )
+				return 1;
+			if( !other.negInfinity() )
+				return -1;
+			return 0;
+		}
+		
+		if( value.equals(other.getValue()) )
+			return 0;  // this doesn't mean they actually are equal
+		
+		return value.compareTo(other.getValue());
+	}
+	
+	@Override
+	public boolean equals(Object other){
+		if( !(other instanceof SegmentPoint) )
+			return false;
+		if( this == other )
+			return true;
+		return ( compareTo((SegmentPoint)other) == 0 ); 
 	}
 	
 }
@@ -52,35 +95,56 @@ public class Segment {
 	
 	public Segment union(Segment a) {
 		SegmentPoint newBegin, newEnd;
-		if( a.begin.isInfinity() || begin.isInfinity() )
-			newBegin = new SegmentPoint();
-		else if( a.begin.getValue().compareTo(begin.getValue()) == -1 )
-			newBegin = a.begin;
-		else
-			newBegin = begin;
 		
-		if( a.end.isInfinity() || end.isInfinity() )
-			newEnd = new SegmentPoint();
-		else if( a.end.getValue().compareTo(end.getValue()) == 1 )
-			newEnd = a.end;
+		int compBegin = begin.compareTo(a.begin);
+		if( compBegin == -1 )
+			newBegin = begin;
+		else if( compBegin == 1 )
+			newBegin = a.begin;
+		else if( begin.isInclusive() )
+			newBegin = begin;
 		else
+			newBegin = a.begin;
+		
+		int compEnd = end.compareTo(a.end);
+		if( compEnd == 1 )
 			newEnd = end;
+		else if( compEnd == -1 )
+			newEnd = a.end;
+		else if( end.isInfinity() )
+			newEnd = end;
+		else if( end.isInclusive() )
+			newEnd = end;
+		else
+			newEnd = a.end;
 		
 		return new Segment(newBegin, newEnd);
 	}
 	
 	public Segment intersect(Segment a) {
 		SegmentPoint newBegin, newEnd;
-		if( a.begin.isInfinity() && begin.isInfinity() )
-			newBegin = new SegmentPoint();
-		else if( begin.isInfinity() || (!a.begin.isInfinity() && a.begin.getValue().compareTo(begin.getValue()) == 1 ) )
+		
+		int compBegin = begin.compareTo(a.begin);
+		if( compBegin == 1 )
+			newBegin = begin;
+		else if( compBegin == -1 )
+			newBegin = a.begin;
+		else if( begin.isInfinity() )
+			newBegin = begin;
+		else if( begin.isInclusive() )  // values are equal
 			newBegin = a.begin;
 		else
 			newBegin = begin;
 		
-		if( a.end.isInfinity() && end.isInfinity() )
-			newEnd = new SegmentPoint();
-		else if( end.isInfinity() || (!a.end.isInfinity() && a.end.getValue().compareTo(end.getValue()) == -1 ) )
+		
+		int compEnd = end.compareTo(a.end); 
+		if( compEnd == -1 )
+			newEnd = end;
+		else if( compEnd == 1 )
+			newEnd = a.end;
+		else if( begin.isInfinity() )
+			newEnd = end;
+		else if( begin.isInclusive() )  // values are equal
 			newEnd = a.end;
 		else
 			newEnd = end;
