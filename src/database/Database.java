@@ -92,10 +92,6 @@ public class Database {
 				}
 				if(!first)
 					System.out.print(',');
-				System.err.println("------");
-				System.err.println(col);
-				System.err.println(tableName1);
-				System.err.println("------");
 				System.out.print(value.getValue().toString());
 				first=false;
 			}
