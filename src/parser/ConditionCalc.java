@@ -195,7 +195,7 @@ public class ConditionCalc {
 		String table_name=table_name1;
 		if(i<comp.length() && comp.charAt(i)=='.'){
 			table_name = comp.substring(0,i);
-			j=i;
+			j=i+1;
 			i++;
 			while(i<comp.length() && (is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i) ) ) )
 				i++;
@@ -255,7 +255,7 @@ public class ConditionCalc {
 //////////////////////////////////////////////////////////////////////////	
 	
 	private  long getIntValue(String a, int table){
-
+		System.err.println(a);
 		if(table == 1)
 			return ((long)myrow.get(a).getValue());
 		else
