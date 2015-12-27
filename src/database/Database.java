@@ -25,8 +25,8 @@ public class Database {
 		tables.get(tableName).addIndex(indexName, columnName);
 	}
 	
-	public void update(String tableName, String columnName, String valueClause, String whereClause  ){
-		tables.get(tableName).update(columnName,valueClause,whereClause);
+	public boolean update(String tableName, String columnName, String valueClause, String whereClause  ){
+		return tables.get(tableName).update(columnName,valueClause,whereClause);
 	}
 	
 	public boolean deleteFrom(String tableName, String whereClause  ){

@@ -61,7 +61,8 @@ public class UpdateType extends ParserTypes {
 	@Override
 	public String action(Database database) {
 		System.err.println(tableName + " " + columnName + " " + stringValue + " " + whereClause );
-		database.update(tableName, columnName, stringValue, whereClause);
+		if(!database.update(tableName, columnName, stringValue, whereClause))
+			return "FOREIGN KEY CONSTRAINT RESTRICTS";
 		return null;
 	}
 	
