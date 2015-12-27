@@ -246,18 +246,21 @@ public class DBTable {
 		return updateSelf(rows, columnName, valueClause);
 	}
 	
-	public boolean updateSelf(List<DBObject> rows, String columnName, DBTypes value){
+	public void updateSelf(List<DBObject> rows, String columnName, DBTypes value){ //this function call recuresive
 //		System.err.println(rows.size() + "!@#$");
-		for(DBObject row: rows){
-			//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
-			if(!updateRow(row, value, columnName))
-				return false;
-		}
-		return true;
+//		if(!checkInvFKUpdate(rows)) //check inv fk restricting ...
+//			return false;
+ 		for(DBObject row: rows){
+	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
+			updateRow(row, value, columnName);
+//				return false;
+ 		}
 	}
 	
-	public boolean updateSelf(List<DBObject> rows, String columnName, String valueClause){
+	public boolean updateSelf(List<DBObject> rows, String columnName, String valueClause){ //this function called once
 //		System.err.println(rows.size() + "!@#$");
+ 		if(!checkInvFKUpdate(rows)) //check inv fk restricting ...
+ 			return false;
 		for(DBObject row: rows){
 			DBTypes value = getNewVal(row, columnName, valueClause);
 	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
@@ -271,10 +274,10 @@ public class DBTable {
 		DBTypes oldVal = row.getField(columnName);
 		row.updateField(columnName, newVal);
 		if(columnName.equals(primaryKey))
-			if(!updateInvFK(oldVal, newVal))
-				return false;
+			updateInvFK(oldVal, newVal);
 		return true;
 	}
+	
 	public DBTypes getNewVal(DBObject row, String columnName, String valueClause){
 		ConditionCalc calc=new ConditionCalc(row);
 		DBTypes value=null;
@@ -336,26 +339,17 @@ public class DBTable {
 		return rows;
 	}
 	
-	public boolean updateFK(String tableName, DBTypes oldVal, DBTypes newVal)
+	public void updateFK(String tableName, DBTypes oldVal, DBTypes newVal)
 	{
 		ForeignKey fk = fkTables.get(tableName);
 		List<DBObject> rows = getRowByIndex(fk.columnName, oldVal);
-		if(fk.onUpdate == Action.RESTRICT){
-			if(rows.size() > 0)
-				return false;
-			return true;
-		}
-		else{
-			return updateSelf(rows, fk.columnName, newVal);
-		}
+		updateSelf(rows, fk.columnName, newVal);
 	}
 	
-	private boolean updateInvFK(DBTypes oldVal, DBTypes newVal)
+	private void updateInvFK(DBTypes oldVal, DBTypes newVal)
 	{
 		for(String fk: fkInvTables)
-			 if(!database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal))
-				return false;
-		return true;
+			 database.getTable(fk).updateFK(createTable.getTableName(), oldVal, newVal);
 	}
 	
 	public boolean checkPKValueExists(DBTypes value){
@@ -366,6 +360,33 @@ public class DBTable {
 		return false;
 	}
 	
+	private boolean checkInvFKUpdate(List<DBObject> rows){
+	//		System.err.println(primaryKey);
+		for(DBObject row: rows)
+			for(String fk: fkInvTables)
+				if(!database.getTable(fk).checkFKUpdate(createTable.getTableName(), row.getField(primaryKey)))
+					return false;
+		return true;
+	}
+	
+	public boolean checkFKUpdate(String tableName, DBTypes value)
+	{
+		ForeignKey fk = fkTables.get(tableName);
+		if(!fk.columnName.equals(primaryKey))
+			return true;
+		List<DBObject> rows = getRowByIndex(fk.columnName, value);
+//		System.err.println(fk.onDelete.name());
+//		System.err.println(fk.onUpdate.name());
+		if(fk.onUpdate == Action.RESTRICT){
+			if(rows.size() > 0)
+				return false;
+			return true;
+		}
+		else{
+			return checkInvFKUpdate(rows);
+		}
+	}
+
 	public boolean checkFKDelete(String tableName, DBTypes value)
 	{
 		ForeignKey fk = fkTables.get(tableName);
