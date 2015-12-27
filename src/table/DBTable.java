@@ -378,8 +378,6 @@ public class DBTable {
 	public boolean checkFKUpdate(String tableName, DBTypes value)
 	{
 		ForeignKey fk = fkTables.get(tableName);
-		if(!fk.columnName.equals(primaryKey))
-			return true;
 		List<DBObject> rows = getRowByIndex(fk.columnName, value);
 //		System.err.println(fk.onDelete.name());
 //		System.err.println(fk.onUpdate.name());
@@ -389,6 +387,8 @@ public class DBTable {
 			return true;
 		}
 		else{
+			if(!fk.columnName.equals(primaryKey))
+				return true;
 			return checkInvFKUpdate(rows);
 		}
 	}
