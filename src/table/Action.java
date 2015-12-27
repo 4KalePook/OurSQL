@@ -11,7 +11,7 @@ public enum Action {
 
 	public static Action getValue(String s) {
 		for(Action action: values())
-			if( action.name() == s )
+			if( action.name().equals(s) )
 				return action;
 		return CASCADE;
 	}

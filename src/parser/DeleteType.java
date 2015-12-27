@@ -47,7 +47,8 @@ public class DeleteType extends ParserTypes {
 	public String action(Database database) {
 		System.err.println(whereClause);
 
-		database.deleteFrom(tableName, whereClause);
+		if(!database.deleteFrom(tableName, whereClause))
+			return "FOREIGN KEY CONSTRAINT RESTRICTS";
 		return null;
 	}
 	
