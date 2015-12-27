@@ -38,6 +38,7 @@ public class ConditionCalc {
 	
 	public boolean calculate(String tuple){//Calculate Tuple Condition
 		tuple = Clean(tuple);
+//		System.err.println("!!"+tuple);
 		if(tuple.equals("FALSE"))
 			return false;
 		if(tuple.equals("TRUE"))
@@ -84,7 +85,7 @@ public class ConditionCalc {
 		String sub = Clean(tuple.substring(i,tuple.length()));
 		if(type == TYPE_VARCHAR){
 			String value = getStrValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2));
-			System.err.println(value);
+			//System.err.println(value);
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
 				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) <= 0;
 			}
@@ -145,9 +146,9 @@ public class ConditionCalc {
 		//System.err.println(str+"||\n");
 		int i=0;
 		int j=0;
-		System.err.print(str);
+		//System.err.print(str);
 		while(i<str.length() && (is_letter(str.charAt(i)) ||  is_digit(str.charAt(i) ) ) ){
-			System.err.println(str.length());
+			//System.err.println(str.length());
 			i++;
 		}
 		String table_name=table_name1;
@@ -261,7 +262,7 @@ public class ConditionCalc {
 //////////////////////////////////////////////////////////////////////////	
 	
 	private  long getIntValue(String a, int table){
-		System.err.println(a);
+		//System.err.println(a);
 		if(table == 1)
 			return ((long)myrow.get(a).getValue());
 		else
@@ -269,6 +270,7 @@ public class ConditionCalc {
 	}
 	
 	private  String getStrValue(String a, int table){
+		//System.err.println("!!!!!!!!!!"+a+","+table);
 		if(table==1)
 			return (String)myrow.get(a).getValue();
 		else
@@ -276,7 +278,7 @@ public class ConditionCalc {
 	}
 	
 	private  int getType(String a){
-		
+		//System.err.println(a);
 		if(!myrow.containsKey(a))
 			System.err.println(a+" isn't in hash map");
 		if(myrow.get(a).getClass().equals(VARCHAR.class))
