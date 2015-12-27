@@ -1,8 +1,7 @@
 package parser;
-import java.util.HashMap;
 
 import dbTypes.*;
-import table.*;
+
 
 public class ConditionSegCalc {
 	
@@ -68,6 +67,9 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 				i++;
 		}
 		String ColName = tuple.substring(j,i);
+		if(!Clean(ColName).equals(field_name))
+			return inf;
+		
 		String sub = Clean(tuple.substring(i,tuple.length()));
 		if(type == 0){
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
@@ -97,11 +99,11 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 				return new Segment(new SegmentPoint(new INT 
 						  (IntCompVal(sub.substring(2, sub.length() ) )), false),new SegmentPoint());
 			if(sub.startsWith(">") )
-				return new Segment(new SegmentPoint(), new SegmentPoint(new INT 
-						  (IntCompVal(sub.substring(1, sub.length() ) )), false));
-			if(sub.startsWith("<"))
 				return new Segment(new SegmentPoint(new INT 
 						  (IntCompVal(sub.substring(1, sub.length() ) )), false),new SegmentPoint());
+			if(sub.startsWith("<"))
+				return new Segment(new SegmentPoint(), new SegmentPoint(new INT 
+						  (IntCompVal(sub.substring(1, sub.length() ) )), false));
 			if(sub.startsWith("="))
 				return new Segment(new SegmentPoint(new INT 
 						  (IntCompVal(sub.substring(1, sub.length() ) )), false), new SegmentPoint(new INT 
@@ -231,16 +233,16 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 //			return (String)myrow.get(a).getValue();
 //	}
 	
-	private  int getType(String a){
-		return 0;
-		//string 0 int 1
-			
-	}
-	
-	private  int getType(String a, int table){
-		return 0;
-		//string 0 int 1
-		
-			
-	}
+//	private  int getType(String a){
+//		return 0;
+//		//string 0 int 1
+//			
+//	}
+//	
+//	private  int getType(String a, int table){
+//		return 0;
+//		//string 0 int 1
+//		
+//			
+//	}
 }

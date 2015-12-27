@@ -122,6 +122,10 @@ public class DBTable {
 				
 				for(DBObject row2 : table2.tableObjects){	//TODO make sure this is the correct order for the result
 					ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);
+//					System.err.println(row1.toString());
+//					System.err.println(row2.toString());
+//					System.err.println(Name1.toString());
+//					System.err.println(Name2.toString());
 					if(calc.calculate(whereClause)){   //TODO
 						result.add(join(row1,row2,Name1,Name2,false));
 					}

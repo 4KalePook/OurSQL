@@ -33,7 +33,11 @@ class SegmentPoint {
 }
 
 public class Segment {
-	SegmentPoint begin, end;
+	public SegmentPoint begin, end;
+	public void Print(){
+		System.err.println(begin.getValue());
+		System.err.println(end.getValue().getValue());
+	}
 	
 	Segment(SegmentPoint begin, SegmentPoint end) {
 		this.begin = begin;
