@@ -389,7 +389,7 @@ public class DBTable {
 	}
 	
 	public boolean checkPKValueExists(DBTypes value){
-		if( primaryKey.equals("") || primaryKey == null )
+		if(primaryKey == null || primaryKey.equals(""))
 			return false;  // TODO: this means the FK can't insert anything!
 		if( getRowByIndex(primaryKey, value).size() == 1 )
 			return true;
