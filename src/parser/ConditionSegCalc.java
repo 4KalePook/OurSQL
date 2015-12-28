@@ -28,6 +28,17 @@ public class ConditionSegCalc {
 	
 	
 public Segment calculate(String tuple, String field_name ,int type){//Calculate Tuple Condition
+		String field_table = table_name1;
+		String field = field_name;
+		if(field_name.contains(".")){
+			int i=0;
+			while(field_name.charAt(i)!='.')
+				i++;
+			field_table = field_name.substring(0, i);
+			field = field_name.substring(i+1, field_name.length());
+		}
+	
+	
 		System.err.println(tuple+"|"+ field_name+"|"+type);
 		tuple = Clean(tuple);
 		if(tuple.equals("FALSE"))
@@ -69,7 +80,8 @@ public Segment calculate(String tuple, String field_name ,int type){//Calculate 
 				i++;
 		}
 		String ColName = tuple.substring(j,i);
-		if(!Clean(ColName).equals(field_name))
+		//System.err.println(field);
+		if(!Clean(ColName).equals(field) || (tables==true && !table_name.equals(field_table)))
 			return inf;
 		
 		String sub = Clean(tuple.substring(i,tuple.length()));
