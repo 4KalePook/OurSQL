@@ -1,7 +1,16 @@
 bin/*
 *.zip
+*.jar
+PPhase1-Test/**
+PPhase2-Test/**
+PPhase1-Test/*/*
+PPhase2-Test/*/*
+PPhase1-Test/*/*/*
+PPhase2-Test/*/*/*
+PPhase1-Test/*/*/*/*
+PPhase2-Test/*/*/*/*
+*/err.txt
 .settings/*
 .classpath
 .project
-/bin/
 /bin/

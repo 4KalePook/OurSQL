@@ -14,7 +14,7 @@ public class Run {
 		Scanner scanner = new Scanner(System.in);
 		ParseCommand parser = new ParseCommand();
 		ParserTypes parsedCommand;
-//		System.out.println(CommandTypes.valueOf("CREATE_TABLE").getCommandText());
+//		System.out.println(CommandTypes.valueOf("CREATE_TABLE").getCommandText()); 
 		while(true)
 		{
 			String line = "";
