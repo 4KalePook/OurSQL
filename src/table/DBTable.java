@@ -227,7 +227,7 @@ public class DBTable {
 					}
 			}
 			
-			for(DBObject row1 : tableObjects){	//TODO make sure this is the correct order for the result
+			for(DBObject row1 : rows1){	//TODO make sure this is the correct order for the result
 				String pkcol=table2.primaryKey;	
 				DBTypes value = row1.getField(fkcol);
 		
