@@ -31,13 +31,15 @@ public class TableIndex<T> {
 			index.remove(key);
 	}
 	public void updateIndex(T oldKey, T newKey){
-		if( !index.containsKey(newKey) )
-			index.put(newKey, new ArrayList<DBObject>());
+		index.get(newKey).addAll(index.get(oldKey));
+		index.remove(oldKey);
 		//TODO: merge two index set index.get(key);
 	}
 
 	public void updateIndex(T oldKey, T newKey, DBObject newVal){
 		//TODO: update Index of this Obj
+		remove(oldKey, newVal);
+		insert(newKey, newVal);
 	}
 	
 	public Set<Map.Entry<T, ArrayList<DBObject>>> getFirst(T key) {
