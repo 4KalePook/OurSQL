@@ -159,7 +159,7 @@ public class DBTable {
 			
 			if(seglen(range) < mind){
 					mind=seglen(range);
-					rows=getRowByIndex(key,range.getBegin().getValue()); //TODO check
+					rows=getRowByRange(key,range.getBegin().getValue(),range.getEnd().getValue()); //TODO check
 	
 					break;
 				}
@@ -200,7 +200,7 @@ public class DBTable {
 				Segment range = calc.calculate(whereClause, col,type);	
 				if(seglen(range) < mind){
 					mind=seglen(range);
-						rows1=getRowByIndex(key,range.getBegin().getValue()); 
+						rows1=getRowByRange(key,range.getBegin().getValue(),range.getEnd().getValue()); 
 					break;
 				}
 			}
@@ -214,7 +214,7 @@ public class DBTable {
 				Segment range = calc.calculate(whereClause, col,type);
 				if(seglen(range) < mind){
 					mind=seglen(range);
-						rows2=table2.getRowByIndex(key,range.getBegin().getValue()); 
+						rows2=table2.getRowByRange(key,range.getBegin().getValue(),range.getEnd().getValue()); 
 						break;
 					}
 			}
@@ -260,7 +260,7 @@ public class DBTable {
 				
 				if(seglen(range) < mind){
 					mind=seglen(range);
-					rows1=getRowByIndex(key,range.getBegin().getValue()); //TODO check
+					rows1=getRowByRange(key,range.getBegin().getValue(),range.getEnd().getValue()); //TODO check
 					System.err.println(range.getEnd().getValue());
 					break;
 				}
@@ -410,6 +410,17 @@ public class DBTable {
 			for(DBObject row : entry.getValue())
 				rows.add(row);
 		
+		return rows;
+	}
+	
+	public List<DBObject> getRowByRange(String indexName, DBTypes valueBeg, DBTypes valueEnd){
+		List<DBObject> rows = new LinkedList<DBObject>();
+		
+		Set<Map.Entry<DBTypes, ArrayList<DBObject>>> seg= indices.get(indexName).getSegment(valueBeg, true, valueEnd, true);
+		for(Map.Entry<DBTypes, ArrayList<DBObject>> entry : seg)
+			for(DBObject row : entry.getValue())
+				rows.add(row);
+		//TODO: Check !!!
 		return rows;
 	}
 	
