@@ -249,11 +249,13 @@ public class DBTable {
 	
 	public void updateAllIndex(String indexName, DBTypes oldVal, DBTypes newVal){
 		TableIndex<DBTypes> index=indices.get(indexName);
-		index.updateIndex(oldVal, newVal);
+		if(index != null)
+			index.updateIndex(oldVal, newVal);
 	}
 	public void updateRowIndex(String indexName, DBTypes oldVal, DBTypes newVal, DBObject row){
 		TableIndex<DBTypes> index=indices.get(indexName);
-		index.updateIndex(oldVal, newVal, row);
+		if(index != null)
+			index.updateIndex(oldVal, newVal, row);
 	}
 
 	public boolean update(String columnName,String valueClause,String whereClause){
