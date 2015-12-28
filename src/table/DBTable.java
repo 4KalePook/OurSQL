@@ -112,21 +112,55 @@ public class DBTable {
 		}
 	}
 	
+	boolean isSegPoint(Segment range){
+		if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
+			if(range.getBegin().getValue().getValue().equals(range.getEnd().getValue().getValue()))
+				return true;
+		return false;
+	}
+	
+	
+	int firstDiff(String a,String b){
+		int ret =0;
+		for(int i = 0 ; i < a.length() && i < b.length() ; ++i){
+			if(a.charAt(i)!=b.charAt(i))
+				break;
+			ret=i+1;
+		}
+		return ret;
+	}
+	long inf = 1000*1000*1000;
+	long seglen(Segment range){
+		if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null){
+				if(range.getBegin().getValue().getClass().equals(VARCHAR.class)){
+					return inf-firstDiff((String)range.getEnd().getValue().getValue(),
+							(String)range.getEnd().getValue().getValue()); 
+				}else{
+					return  ((Long)range.getEnd().getValue().getValue()).intValue()
+							-((Long)range.getEnd().getValue().getValue()).intValue();
+				}
+		}else{
+			return inf+10;
+		}
+	
+	}
 
 	public List<DBObject> selectRows(String whereClause){
 		List<DBObject> result = new LinkedList<DBObject>();
 		
 
 		List<DBObject> rows=tableObjects;
+		long mind = inf+2;
 		
 		for(String key: indices.keySet()){
 			ConditionSegCalc calc=new ConditionSegCalc();
 			int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
 			Segment range = calc.calculate(whereClause, key,type);
-			System.err.println(range);
-			if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
-				if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+			
+			if(seglen(range) < mind){
+					mind=seglen(range);
 					rows=getRowByIndex(key,range.getBegin().getValue()); //TODO check
+	
 					break;
 				}
 		}
@@ -153,6 +187,7 @@ public class DBTable {
 		if(Name2.equals("")){
 			return selectRows(whereClause);
 		}
+		long mind=inf+2;
 		if(!isjoin){
 			List<DBObject> result = new LinkedList<DBObject>();
 			
@@ -162,23 +197,23 @@ public class DBTable {
 				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
 				String col = Name1+"."+key;
 				int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
-				Segment range = calc.calculate(whereClause, col,type);
-				if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
-					if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+				Segment range = calc.calculate(whereClause, col,type);	
+				if(seglen(range) < mind){
+					mind=seglen(range);
 						rows1=getRowByIndex(key,range.getBegin().getValue()); 
 					break;
 				}
 			}
 			
 			List<DBObject> rows2=table2.tableObjects;
-			
+			mind=inf+2;
 			for(String key: table2.indices.keySet()){
 				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
 				String col = Name2+"."+key;
 				int type=(table2.schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
 				Segment range = calc.calculate(whereClause, col,type);
-				if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
-					if(range.getBegin().getValue().equals(range.getEnd().getValue())){
+				if(seglen(range) < mind){
+					mind=seglen(range);
 						rows2=table2.getRowByIndex(key,range.getBegin().getValue()); 
 						break;
 					}
@@ -214,17 +249,21 @@ public class DBTable {
 			String fkcol = fkTables.get(Name2).columnName;
 			
 			List<DBObject> rows1=tableObjects;
-			
+			System.err.println("join");
 			for(String key: indices.keySet()){
 				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
 				String col = Name1+"."+key;
 				int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
 				Segment range = calc.calculate(whereClause, col,type);
-				if(range.getBegin().getValue()!=null && range.getEnd().getValue()!=null)
-					if(range.getBegin().getValue().equals(range.getEnd().getValue())){
-						rows1=getRowByIndex(key,range.getBegin().getValue()); //TODO check
-						break;
-					}
+				
+
+				
+				if(seglen(range) < mind){
+					mind=seglen(range);
+					rows1=getRowByIndex(key,range.getBegin().getValue()); //TODO check
+					System.err.println(range.getEnd().getValue());
+					break;
+				}
 			}
 			
 			for(DBObject row1 : rows1){	//TODO make sure this is the correct order for the result
