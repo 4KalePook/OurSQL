@@ -284,6 +284,14 @@ public class DBTable {
 			DBTypes value = getNewVal(row, columnName, valueClause);
 	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
 			DBTypes oldVal = row.getField(columnName);
+			
+			for(ForeignKey fk: createTable.getFKs())
+				if( fk.columnName.equals(columnName) )
+					if( !database.getTable(fk.tableName).checkPKValueExists(value) ) {
+						System.out.println(C2Constraint.Message);
+						return true;
+					}
+			
 			if(!updateRow(row, value, columnName))
 				return true;
 			updateRowIndex(columnName, oldVal, value, row);
@@ -298,12 +306,6 @@ public class DBTable {
 	    	  System.out.println(C1Constraint.Message);
 	          return true;
 	      }
-		for(ForeignKey fk: createTable.getFKs())
-			if( fk.columnName.equals(columnName) )
-				if( !database.getTable(fk.tableName).checkPKValueExists(newVal) ) {
-					System.out.println(C2Constraint.Message);
-					return true;
-				}
 		
 		row.updateField(columnName, newVal);
 		if(columnName.equals(primaryKey))
