@@ -296,6 +296,12 @@ public class DBTable {
 	    	  System.out.println(C1Constraint.Message);
 	          return true;
 	      }
+		for(ForeignKey fk: createTable.getFKs())
+			if( fk.columnName.equals(columnName) )
+				if( !database.getTable(fk.tableName).checkPKValueExists(newVal) ) {
+					System.out.println(C2Constraint.Message);
+					return true;
+				}
 		
 		row.updateField(columnName, newVal);
 		if(columnName.equals(primaryKey))
