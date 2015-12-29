@@ -31,7 +31,7 @@ public class Run {
 				System.out.println(result);
 			
 		}
-//		scanner.close();
+		scanner.close();
 
 		
 //		HashMap<String, DBTypes> x = new HashMap<>();

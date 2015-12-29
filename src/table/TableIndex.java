@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import dbTypes.DBTypes;
 import parser.Segment;
 
 public class TableIndex<T> {
@@ -60,6 +58,7 @@ public class TableIndex<T> {
 		return index.tailMap(beg, begInc).headMap(end, endInc).entrySet();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Set<Map.Entry<T, ArrayList<DBObject>>> getSegment(Segment seg) {
 		if( seg.getBegin().posInfinity() || seg.getEnd().negInfinity() )
 			return new TreeSet<Map.Entry<T, ArrayList<DBObject>>>();

@@ -54,7 +54,7 @@ public class CreateTableType extends ParserTypes {
 
 	@Override
 	public void parse() {
-		int columnsStart = command.indexOf('(');
+//		int columnsStart = command.indexOf('(');
 		int columnsEnd = command.indexOf(')');
 		Scanner scanner = new Scanner(command.substring(0, columnsEnd));
 		scanner.useDelimiter(ParseCommand.DELIMS);
@@ -95,6 +95,7 @@ public class CreateTableType extends ParserTypes {
 				PK = scanner.next();
 				continue;
 			}
+			
 			String fkcol = scanner.next();
 			System.err.println(fkcol);
 			scanner.next(); // REFERENCES
@@ -108,6 +109,7 @@ public class CreateTableType extends ParserTypes {
 			
 			fks.add(new ForeignKey(tableName, fkcol, onUpdate, onDelete));
 		}
+		scanner.close();
 
 	}
 
