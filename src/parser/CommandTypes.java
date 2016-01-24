@@ -6,7 +6,8 @@ public enum CommandTypes{
 	INSERT_INTO("INSERT INTO",InsertType.class) ,
 	UPDATE("UPDATE", UpdateType.class) ,
 	DELETE_FROM("DELETE FROM",DeleteType.class),
-	SELECT("SELECT",SelectType.class); 
+	SELECT("SELECT",SelectType.class),
+	CREATE_VIEW("CREATE VIEW",CreateViewType.class) ; 
 	
 	private String commandText;
 	private Class<?> commandClass;

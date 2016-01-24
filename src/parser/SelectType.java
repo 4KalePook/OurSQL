@@ -13,6 +13,8 @@ public class SelectType extends ParserTypes {
 	List<String> fullNames;
 	String whereClause;
 	boolean isjoin;
+	List<String> groupBy;
+	String havingClause;
 
 
 
@@ -22,16 +24,31 @@ public class SelectType extends ParserTypes {
 	public String getTableName2() {
 		return tableName2;
 	}
+	public List<String> getFullNames(){
+		return fullNames;
+	}
 
 
 	public SelectType() {
 		this.commandType = CommandTypes.SELECT;
 		fullNames= new LinkedList<String>();
+		groupBy=new LinkedList<String>();
 	}
 	
 	@Override
 	public void parse() {
-		Scanner scanner = new Scanner(command);
+
+		int cend = command.indexOf(";");
+		if(cend==-1)
+			cend=command.length();
+		
+		int gind= command.indexOf("GROUP");
+		int hind= command.indexOf("HAVING");
+		if(gind==-1)
+			gind=cend;
+		if(hind==-1)
+			hind=cend;
+		Scanner scanner = new Scanner(command.substring(0, gind));
 		scanner.useDelimiter(ParseCommand.DELIMS);
 		scanner.next(); // select
 		fullNames.clear();
@@ -69,11 +86,26 @@ public class SelectType extends ParserTypes {
 			whereClause="TRUE";
 		}
 		scanner.close();
+		if(gind!= cend){
+			scanner = new Scanner(command.substring(gind,hind));
+			scanner.next(); //Group
+			scanner.next(); //By
+			while(scanner.hasNext()){
+				groupBy.add(scanner.next());
+			}
+		}
+		if(hind!= cend){
+			scanner = new Scanner(command.substring(hind,cend));
+			scanner.next(); //HAVING
+			havingClause=scanner.nextLine();
+		}else{
+			havingClause="TRUE";
+		}
 	}
 
 	@Override
 	public String action(Database database) {
-		database.selectFrom(tableName1,tableName2, fullNames , whereClause,isjoin);
+		database.selectFrom(tableName1,tableName2, fullNames , whereClause,isjoin,groupBy,havingClause);
 		return null;
 	}
 	

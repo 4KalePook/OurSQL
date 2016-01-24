@@ -1,4 +1,4 @@
-TESTS=('PPhase1-Test/PPhase1-Test' 'PPhase2-Test');
+TESTS=( 'PPhase2-Test'); #'PPhase1-Test/PPhase1-Test'
 for FOLDERS in "${TESTS[@]}";
 do
 	for f in ./$FOLDERS/*;

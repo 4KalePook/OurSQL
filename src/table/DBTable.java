@@ -34,6 +34,8 @@ public class DBTable {
 	
 	HashMap<String, DBTypes> schema; //HashMap<String, DBTypes> DBObject = new HashMap<String, DBTypes>(schema);
 	CreateTableType createTable;
+	public DBTable(){
+	}
 	
 	public DBTable(CreateTableType createTable, Database database) {
 		this.database = database;

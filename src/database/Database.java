@@ -34,7 +34,7 @@ public class Database {
 		return tables.get(tableName).delete(whereClause);
 	}
 	
-	public void selectFrom(String tableName1,String tableName2,List<String> columnNames, String whereClause, boolean isjoin  ){
+	public void selectFrom(String tableName1,String tableName2,List<String> columnNames, String whereClause, boolean isjoin,List<String> groupBy,String havingClause  ){
 
 		//TODO: optimize with indices
 		DBTable table1 = tables.get(tableName1);
