@@ -11,13 +11,13 @@ public class ConditionSegCalc {
 	private final static long Null = -2029391002;
 	
 	private boolean tables;	//more than one table then is true
-	private String table_name1, table_name2;
+	private String table_name1;// table_name2;
 	public ConditionSegCalc(){
 		tables = false;
 	}
 	public ConditionSegCalc(String table_name1, String table_name2){
 		this.table_name1 = table_name1;
-		this.table_name2 = table_name2;
+		//this.table_name2 = table_name2;
 		if(table_name2==null || table_name2.equals(""))
 			tables = false;
 		else{
