@@ -53,7 +53,7 @@ public class Database {
 					HashMap <List<DBTypes>,DBObject> groups;
 					groups=new HashMap<List<DBTypes>, DBObject>();
 					
-					
+			//		System.err.println("HIIII");
 					for(DBObject obj: rows){
 						DBObject group=null;
 						List<DBTypes> groupName=new LinkedList<DBTypes>();
@@ -64,10 +64,17 @@ public class Database {
 						if(groups.containsKey(groupName)){
 							group=groups.get(groupName);
 						}
+						boolean newGroup;
+						if(group==null){
+							newGroup=true;
+							group=new DBObject();
+						}else{
+							newGroup=false;
+						}
+					//	System.err.println("test");
 						for(String col:obj.getDataSet().keySet()){
 							
-							if(group==null){
-								group=new DBObject();
+							if(newGroup){
 								DBTypes val = obj.getField(col);
 								group.insertField("MIN("+col+")", val);
 								group.insertField("MAX("+col+")", val);
@@ -82,9 +89,10 @@ public class Database {
 									group.insertField((String)names[i], (DBTypes)values[i]);
 								}
 							}else{
+						//		System.err.println(group.getField("MIN("+col+")"));
 								DBTypes val = obj.getField(col);
 								group.updateField("MIN("+col+")", (val.compareTo(group.getField("MIN("+col+")")) < 0 ?val:group.getField("MIN("+col+")")));
-								group.updateField("MAX("+col+")", (val.compareTo(group.getField("MIN("+col+")")) > 0 ?val:group.getField("MAX("+col+")")));
+								group.updateField("MAX("+col+")", (val.compareTo(group.getField("MAX("+col+")")) > 0 ?val:group.getField("MAX("+col+")")));
 								group.updateField("COUNT("+col+")",new INT((new Long(1+(Long)(group.getField("COUNT("+col+")")).getValue()))));
 								if(val.getClass().equals(INT.class)){
 									group.updateField("SUM("+col+")",new INT((Long)val.getValue()+(Long)(group.getField("SUM("+col+")")).getValue()));
@@ -93,6 +101,7 @@ public class Database {
 							}
 						}
 					}
+				//	System.err.println("!@#$");
 					rows=new LinkedList<DBObject>();
 					for(DBObject group:groups.values()){
 						ConditionCalc calc=new ConditionCalc(group, group, tableName1, tableName2);
@@ -110,6 +119,7 @@ public class Database {
 			System.out.println("NO RESULTS");
 			return;
 		}
+		
 		/*************************
 		 * Displaying the header *
 		 *************************/
