@@ -131,7 +131,7 @@ public class SelectType extends ParserTypes {
 				}
 			}
 		}
-		return rowret;
+		return rowsret;
 	}
 	
 	
