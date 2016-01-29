@@ -119,7 +119,19 @@ public class SelectType extends ParserTypes {
 	}
 	
 	public List<DBObject> toRows(Database database) {
-		return database.selectToRows(tableName1,tableName2, fullNames , whereClause,isjoin,groupBy,havingClause);
+		List<DBObject> rows= database.selectToRows(tableName1,tableName2, fullNames , whereClause,isjoin,groupBy,havingClause);
+		List<DBObject> rowsret = new LinkedList<DBObject>();
+		for(DBObject obj:rows){
+			DBObject retObj=new DBObject();
+			for(String key:obj.getDataSet().keySet()){
+				if(key.indexOf(".")!=-1){
+					retObj.insertField(key, obj.getField(key.substring(key.indexOf(".")+1)));
+				}else{
+					retObj.insertField(key, obj.getField(key));
+				}
+			}
+		}
+		return rowret;
 	}
 	
 	

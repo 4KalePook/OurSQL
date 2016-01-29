@@ -42,7 +42,21 @@ public class DBView extends DBTable {
 		this.quary = Quary;
 		setUpdatable();
 	}
+	@Override
+	public List<DBObject> getTableObjects() {
+		return quary.toRows(database);
+	};
+
+	@Override
+	public HashMap<String,table.TableIndex<DBTypes>> getIndices() {
+		return new HashMap<String, TableIndex<DBTypes>>();
+	};
 	
+	@Override
+	public String getPrimaryKey() {
+		return "";
+	};
+
 	private boolean setSchema(DBTable parent) {
 		schema = new HashMap<String, DBTypes>();
 		types = new ArrayList<DBTypes>();
