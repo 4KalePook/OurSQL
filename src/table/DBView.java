@@ -3,6 +3,7 @@ package table;
 import java.io.ObjectInputStream.GetField;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,18 +34,48 @@ public class DBView extends DBTable {
 	CreateViewType createView;
 	SelectType quary;
 	private boolean isUpdatable;  // pazira ye khodemun
+	List<DBTypes> types; // this might be null, when isUpdatable, it's not null
 	
 	public DBView(CreateViewType createView, Database database, SelectType Quary) {
 		this.database=database;
 		this.createView=createView;
 		this.quary = Quary;
-		// TODO: implement this
-		if( quary.getTableName2() != "" && quary.getTableName2() != quary.getTableName1() )
-			this.isUpdatable = false;
-		else
-			this.isUpdatable = true;
+		setUpdatable();
+	}
+	
+	private boolean setSchema(DBTable parent) {
+		schema = new HashMap<String, DBTypes>();
+		types = new ArrayList<DBTypes>();
+		for(String columnName : quary.getFullNames()) {
+			if( !parent.getSchema().containsKey(columnName) )
+				return false; 
+			schema.put(columnName, parent.getSchema().get(columnName));
+			types.add(schema.get(columnName));
+		}
+		if( quary.getFullNames().size() != schema.size() )
+			return false;
+		return true;
 	}
 
+	private void setUpdatable() {
+		if( !quary.getTableName2().equals("") || !quary.getGroupBy().isEmpty() ) {
+			isUpdatable = false;
+		}else{
+			DBTable parent = database.getTable(quary.getTableName1());
+			primaryKey = parent.primaryKey;
+			if( primaryKey.equals("") || primaryKey == null || 
+					(parent instanceof DBView && !((DBView)parent).isUpdatable ) ) {
+				isUpdatable = false;
+			}
+			else if( !setSchema(parent) )
+				isUpdatable = false;
+			else if( schema.containsKey(primaryKey) )
+				isUpdatable = true;
+			else
+				isUpdatable = false;
+			
+		}
+	}
 	
 	
 	public List<DBObject> selectRows(String Name1,String Name2,DBTable table2, String whereClause,boolean isjoin){
@@ -66,7 +97,9 @@ public class DBView extends DBTable {
 
 	public boolean update(String columnName,String valueClause,String whereClause){
 		if( isUpdatable )
-			return database.getTable(quary.getTableName1()).update(columnName, valueClause, whereClause);
+			return database.getTable(quary.getTableName1()).update(
+					columnName, valueClause, "(" + whereClause + ") AND (" + quary.getWhereClause() + ")"
+			);
 		else
 			return false;
 	}
@@ -86,8 +119,40 @@ public class DBView extends DBTable {
 	
 	public boolean delete(String whereClause){
 		if( isUpdatable )
-			return database.getTable(quary.getTableName1()).delete(whereClause);
+			return database.getTable(quary.getTableName1()).delete(
+					"(" + whereClause + ") AND (" + quary.getWhereClause() + ")" 
+			);
 		return false;
+	}
+	
+	public void insertRow(List<DBTypes> values) throws Constraint {
+		// TODO: check if we need to check whereClause
+		if( isUpdatable ) {
+			HashMap<String, DBTypes> valueMap = new HashMap<String, DBTypes>();
+			for(int i=0; i<values.size(); i++)
+				valueMap.put(quary.getFullNames().get(i), values.get(i));
+			
+			DBTable parent = database.getTable(quary.getTableName1());
+			List<DBTypes> parentValues = new ArrayList<DBTypes>();
+			if( parent instanceof DBView ) {
+				DBView parentView = (DBView)parent;
+				for(int i=0; i<parentView.quary.getFullNames().size(); i++)
+					if( valueMap.containsKey(parentView.quary.getFullNames().get(i)) )
+						parentValues.add(valueMap.get(parentView.quary.getFullNames().get(i)));
+					else
+						parentValues.add(types.get(i).toValue("NULL"));
+			}
+			else {
+				List<DBTypes> types = parent.getColumnTypes();
+
+				for(int i=0; i<parent.createTable.getNames().size(); i++)
+					if( valueMap.containsKey(parent.createTable.getNames().get(i)) )
+						parentValues.add(valueMap.get(parent.createTable.getNames().get(i)));
+					else
+						parentValues.add(types.get(i).toValue("NULL"));
+			}
+			parent.insertRow(parentValues);
+		}
 	}
 	
 	public void DBTableGet()

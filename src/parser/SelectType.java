@@ -17,7 +17,12 @@ public class SelectType extends ParserTypes {
 	String havingClause;
 
 
-
+	public List<String> getGroupBy() {
+		return groupBy;
+	}
+	public String getWhereClause() {
+		return whereClause;
+	}
 	public String getTableName1() {
 		return tableName1;
 	}
