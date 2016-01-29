@@ -61,6 +61,9 @@ public class SelectType extends ParserTypes {
 		while(!token.equals("FROM")){
 			fullNames.add(token);
 			token=scanner.next();
+			if(token.equals("MAX") || token.equals("MIN") || token.equals("SUM")|| token.equals("COUNT")|| token.equals("AVG")){
+				token=token+"("+scanner.next()+")";
+			}
 		}
 		tableName1 = scanner.next();  //table name
 		tableName2 = "";

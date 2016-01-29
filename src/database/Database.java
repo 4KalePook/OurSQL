@@ -1,9 +1,12 @@
 package database;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
+import parser.ConditionCalc;
 import dbTypes.DBTypes;
+import dbTypes.INT;
 import errors.Constraint;
 import table.DBObject;
 import table.DBTable;
@@ -33,22 +36,80 @@ public class Database {
 	public boolean deleteFrom(String tableName, String whereClause  ){
 		return tables.get(tableName).delete(whereClause);
 	}
+	public List<DBObject> selectToRows(String tableName1,String tableName2,List<String> columnNames, String whereClause, boolean isjoin,List<String> groupBy,String havingClause  ){
+		//TODO: optimize with indices
+				DBTable table1 = tables.get(tableName1);
+				
+				DBTable table2 = table1;
+				if(!tableName2.equals("")){
+						table2=tables.get(tableName2);
+				}
+				List<DBObject> rows=table1.selectRows(tableName1,tableName2,table2,whereClause,isjoin);
+				if(rows.isEmpty()){
+					return new LinkedList<DBObject>();    
+				}
+				
+				if(!groupBy.isEmpty()){
+					HashMap <List<DBTypes>,DBObject> groups;
+					groups=new HashMap<List<DBTypes>, DBObject>();
+					
+					
+					for(DBObject obj: rows){
+						DBObject group=null;
+						List<DBTypes> groupName=new LinkedList<DBTypes>();
+						for(String str:groupBy){
+							groupName.add(obj.getField(str));
+							obj.DeleteField(str);
+						}
+						if(groups.containsKey(groupName)){
+							group=groups.get(groupName);
+						}
+						for(String col:obj.getDataSet().keySet()){
+							
+							if(group==null){
+								group=new DBObject();
+								DBTypes val = obj.getField(col);
+								group.insertField("MIN("+col+")", val);
+								group.insertField("MAX("+col+")", val);
+								group.insertField("COUNT("+col+")",new INT(new Long(1)));
+								group.insertField("SUM("+col+")", val);
+								group.insertField("AVG("+col+")", val);
+								
+
+								Object[] names=groupBy.toArray();
+								Object[] values=groupName.toArray();
+								for(int i = 0 ; i < names.length ; ++i){
+									group.insertField((String)names[i], (DBTypes)values[i]);
+								}
+							}else{
+								DBTypes val = obj.getField(col);
+								group.updateField("MIN("+col+")", (val.compareTo(group.getField("MIN("+col+")")) < 0 ?val:group.getField("MIN("+col+")")));
+								group.updateField("MAX("+col+")", (val.compareTo(group.getField("MIN("+col+")")) > 0 ?val:group.getField("MAX("+col+")")));
+								group.updateField("COUNT("+col+")",new INT((new Long(1+(Long)(group.getField("COUNT("+col+")")).getValue()))));
+								if(val.getClass().equals(INT.class)){
+									group.updateField("SUM("+col+")",new INT((Long)val.getValue()+(Long)(group.getField("SUM("+col+")")).getValue()));
+									group.updateField("AVG("+col+")",new INT((Long)group.getField("SUM("+col+")").getValue()/(Long)group.getField("COUNT("+col+")").getValue()));
+								}
+							}
+						}
+					}
+					rows=new LinkedList<DBObject>();
+					for(DBObject group:groups.values()){
+						ConditionCalc calc=new ConditionCalc(group, group, tableName1, tableName2);
+						if(calc.calculate(havingClause)){
+							rows.add(group);
+						}
+					}
+				}
+			return rows;
+	}
 	
 	public void selectFrom(String tableName1,String tableName2,List<String> columnNames, String whereClause, boolean isjoin,List<String> groupBy,String havingClause  ){
-
-		//TODO: optimize with indices
-		DBTable table1 = tables.get(tableName1);
-		
-		DBTable table2 = table1;
-		if(!tableName2.equals("")){
-				table2=tables.get(tableName2);
-		}
-		List<DBObject> rows=table1.selectRows(tableName1,tableName2,table2,whereClause,isjoin);
+		List<DBObject> rows = selectToRows(tableName1, tableName2, columnNames, whereClause, isjoin, groupBy, havingClause);
 		if(rows.isEmpty()){
 			System.out.println("NO RESULTS");
-			return;    
+			return;
 		}
-		
 		/*************************
 		 * Displaying the header *
 		 *************************/

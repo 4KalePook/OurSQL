@@ -85,14 +85,12 @@ public class DBView extends DBTable {
 	
 	
 	public void updateAllIndex(String indexName, DBTypes oldVal, DBTypes newVal){
-		TableIndex<DBTypes> index=indices.get(indexName);
-		if(index != null)
-			index.updateIndex(oldVal, newVal);
+		//nothing to do, no index is defined
+		return;
 	}
 	public void updateRowIndex(String indexName, DBTypes oldVal, DBTypes newVal, DBObject row){
-		TableIndex<DBTypes> index=indices.get(indexName);
-		if(index != null)
-			index.updateIndex(oldVal, newVal, row);
+		//nothing to do, no index is defined
+		return;
 	}
 
 	public boolean update(String columnName,String valueClause,String whereClause){
