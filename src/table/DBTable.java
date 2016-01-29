@@ -149,6 +149,12 @@ public class DBTable {
 	public List<DBObject> getTableObjects(){
 		return tableObjects;
 	}
+	public HashMap<String, TableIndex<DBTypes>> getIndices(){
+		return indices;
+	}
+	public String getPrimaryKey(){
+		return primaryKey;
+	}
 
 	public List<DBObject> selectRows(String whereClause){
 		List<DBObject> result = new LinkedList<DBObject>();
@@ -157,7 +163,7 @@ public class DBTable {
 		List<DBObject> rows=getTableObjects();
 		long mind = inf+2;
 		
-		for(String key: indices.keySet()){
+		for(String key: getIndices().keySet()){
 			ConditionSegCalc calc=new ConditionSegCalc();
 			int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
 			Segment range = calc.calculate(whereClause, key,type);
@@ -198,7 +204,7 @@ public class DBTable {
 			
 			List<DBObject> rows1=getTableObjects();
 			
-			for(String key: indices.keySet()){
+			for(String key: getIndices().keySet()){
 				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
 				String col = Name1+"."+key;
 				int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
@@ -210,9 +216,9 @@ public class DBTable {
 				}
 			}
 			
-			List<DBObject> rows2=table2.tableObjects;
+			List<DBObject> rows2=table2.getTableObjects();
 			mind=inf+2;
-			for(String key: table2.indices.keySet()){
+			for(String key: table2.getIndices().keySet()){
 				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
 				String col = Name2+"."+key;
 				int type=(table2.schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
@@ -253,9 +259,9 @@ public class DBTable {
 			System.err.println(Name2);
 			String fkcol = fkTables.get(Name2).columnName;
 			
-			List<DBObject> rows1=tableObjects;
+			List<DBObject> rows1=getTableObjects();
 			System.err.println("join");
-			for(String key: indices.keySet()){
+			for(String key: getIndices().keySet()){
 				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
 				String col = Name1+"."+key;
 				int type=(schema.get(key).getClass().equals(INT.class)?ConditionCalc.TYPE_INT:ConditionCalc.TYPE_VARCHAR);
@@ -272,10 +278,10 @@ public class DBTable {
 			}
 			
 			for(DBObject row1 : rows1){	//TODO make sure this is the correct order for the result
-				String pkcol=table2.primaryKey;	
+				String pkcol=table2.getPrimaryKey();	
 				DBTypes value = row1.getField(fkcol);
 		
-				Set<Map.Entry<DBTypes, ArrayList<DBObject>>> seg= table2.indices.get(pkcol).getSegment(value, true, value, true);
+				Set<Map.Entry<DBTypes, ArrayList<DBObject>>> seg= table2.getIndices().get(pkcol).getSegment(value, true, value, true);
 				for(Map.Entry<DBTypes, ArrayList<DBObject>> entry : seg){	//TODO make sure this is the correct order for the result
 					for(DBObject row2 : entry.getValue()) {
 						ConditionCalc calc=new ConditionCalc(row1, row2, Name1, Name2);

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
 
+import table.DBObject;
 import database.Database;
 
 public class SelectType extends ParserTypes {
@@ -110,6 +111,10 @@ public class SelectType extends ParserTypes {
 	public String action(Database database) {
 		database.selectFrom(tableName1,tableName2, fullNames , whereClause,isjoin,groupBy,havingClause);
 		return null;
+	}
+	
+	public List<DBObject> toRows(Database database) {
+		return database.selectToRows(tableName1,tableName2, fullNames , whereClause,isjoin,groupBy,havingClause);
 	}
 	
 	
