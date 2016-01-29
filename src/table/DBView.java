@@ -45,14 +45,12 @@ public class DBView extends DBTable {
 	
 	
 	public void updateAllIndex(String indexName, DBTypes oldVal, DBTypes newVal){
-		TableIndex<DBTypes> index=indices.get(indexName);
-		if(index != null)
-			index.updateIndex(oldVal, newVal);
+		//nothing to do, no index is defined
+		return;
 	}
 	public void updateRowIndex(String indexName, DBTypes oldVal, DBTypes newVal, DBObject row){
-		TableIndex<DBTypes> index=indices.get(indexName);
-		if(index != null)
-			index.updateIndex(oldVal, newVal, row);
+		//nothing to do, no index is defined
+		return;
 	}
 
 	public boolean update(String columnName,String valueClause,String whereClause){
@@ -65,9 +63,8 @@ public class DBView extends DBTable {
 //		if(!checkInvFKUpdate(rows)) //check inv fk restricting ...
 //			return false;
  		for(DBObject row: rows){
-	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
-			updateRow(row, value, columnName);
-//				return false;
+			//updateRow(row, value, columnName);
+ 			//TODO update reference table for each row
  		}
  		
  		

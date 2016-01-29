@@ -9,6 +9,9 @@ public class DBObject {
 	public DBObject(HashMap<String, DBTypes> dataSet) {
 		this.dataSet = dataSet;
 	}
+	public HashMap<String,DBTypes> getDataSet(){
+		return dataSet;
+	}
 	
 	public DBObject() {
 		this.dataSet = new HashMap<String, DBTypes>();
@@ -32,6 +35,12 @@ public class DBObject {
 //		if(dataSet.containsKey(fieldName))
 			dataSet.put(fieldName, value);
 	}
+	
+	public void DeleteField(String fieldName){
+//		if(dataSet.containsKey(fieldName))
+			dataSet.remove(fieldName);
+	}
+	
 	public DBTypes getField(String fieldName){
 		//TODO: maybe fieldName not exist!
 		if(dataSet.containsKey(fieldName))

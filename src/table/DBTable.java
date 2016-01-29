@@ -33,7 +33,10 @@ public class DBTable {
 	CreateTableType createTable;
 	public DBTable(){
 	}
-	
+
+	public DBTable(HashMap<String, DBTypes> schema) {
+		this.schema=schema; 
+	}
 	public DBTable(CreateTableType createTable, Database database) {
 		this.database = database;
 		tableObjects = new LinkedList<>();
@@ -143,12 +146,15 @@ public class DBTable {
 		}
 	
 	}
+	public List<DBObject> getTableObjects(){
+		return tableObjects;
+	}
 
 	public List<DBObject> selectRows(String whereClause){
 		List<DBObject> result = new LinkedList<DBObject>();
 		
 
-		List<DBObject> rows=tableObjects;
+		List<DBObject> rows=getTableObjects();
 		long mind = inf+2;
 		
 		for(String key: indices.keySet()){
@@ -190,7 +196,7 @@ public class DBTable {
 		if(!isjoin){
 			List<DBObject> result = new LinkedList<DBObject>();
 			
-			List<DBObject> rows1=tableObjects;
+			List<DBObject> rows1=getTableObjects();
 			
 			for(String key: indices.keySet()){
 				ConditionSegCalc calc=new ConditionSegCalc(Name1,Name2);
