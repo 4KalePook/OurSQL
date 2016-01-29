@@ -25,15 +25,24 @@ import parser.ConditionSegCalc;
 import parser.CreateTableType;
 import parser.CreateViewType;
 import parser.Segment;
+import parser.SelectType;
 
 public class DBView extends DBTable {
     Database database;
 	HashMap<String, DBTypes> schema; //HashMap<String, DBTypes> DBObject = new HashMap<String, DBTypes>(schema);
 	CreateViewType createView;
+	SelectType quary;
+	private boolean isUpdatable;  // pazira ye khodemun
 	
-	public DBView(CreateViewType createView, Database database) {
+	public DBView(CreateViewType createView, Database database, SelectType Quary) {
 		this.database=database;
 		this.createView=createView;
+		this.quary = Quary;
+		// TODO: implement this
+		if( quary.getTableName2() != "" && quary.getTableName2() != quary.getTableName1() )
+			this.isUpdatable = false;
+		else
+			this.isUpdatable = true;
 	}
 
 	
@@ -56,58 +65,10 @@ public class DBView extends DBTable {
 	}
 
 	public boolean update(String columnName,String valueClause,String whereClause){
-		List<DBObject> rows= selectRows(whereClause);
-		return updateSelf(rows, columnName, valueClause);
-	}
-	
-	public void updateSelf(List<DBObject> rows, String columnName, DBTypes value){ //this function call recuresive
-//		System.err.println(rows.size() + "!@#$");
-//		if(!checkInvFKUpdate(rows)) //check inv fk restricting ...
-//			return false;
- 		for(DBObject row: rows){
-	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
-			updateRow(row, value, columnName);
-//				return false;
- 		}
- 		
- 		
-	}
-	
-	public boolean updateSelf(List<DBObject> rows, String columnName, String valueClause){ //this function called once
-//		System.err.println(rows.size() + "!@#$");
- 		if(!checkInvFKUpdate(rows)) //check inv fk restricting ...
- 			return false;
-		for(DBObject row: rows){
-			DBTypes value = getNewVal(row, columnName, valueClause);
-	//		System.err.println("UPDATE" + " " + columnName + " " + value.toStr() );
-			DBTypes oldVal = row.getField(columnName);
-			
-			for(ForeignKey fk: createTable.getFKs())
-				if( fk.columnName.equals(columnName) )
-					if( !database.getTable(fk.tableName).checkPKValueExists(value) ) {
-						System.out.println(C2Constraint.Message);
-						return true;
-					}
-			
-			if(!updateRow(row, value, columnName))
-				return true;
-			updateRowIndex(columnName, oldVal, value, row);
-		}
-		return true;
-	}
-	
-	public boolean updateRow(DBObject row, DBTypes newVal, String columnName){
-		DBTypes oldVal = row.getField(columnName);
-		if(columnName.equals(primaryKey))
-	      if( checkPKValueExists(newVal) ) {
-	    	  System.out.println(C1Constraint.Message);
-	          return true;
-	      }
-		
-		row.updateField(columnName, newVal);
-		if(columnName.equals(primaryKey))
-			updateInvFK(oldVal, newVal);
-		return true;
+		if( isUpdatable )
+			return database.getTable(quary.getTableName1()).update(columnName, valueClause, whereClause);
+		else
+			return false;
 	}
 	
 	public DBTypes getNewVal(DBObject row, String columnName, String valueClause){
@@ -124,27 +85,9 @@ public class DBView extends DBTable {
 	}
 	
 	public boolean delete(String whereClause){
-		List<DBObject> rows= selectRows(whereClause);
-		if(!checkInvFKDelete(rows))
-		{
-//			System.err.println("check on delete false!");
-			return false;
-		}
-//		System.err.println("check on delete ok!");
-		deleteInvFK(rows);
-//		System.err.println("delete INVFK ok");
-		deleteSelf(rows);
-		return true;
-	}
-	
-	public void deleteSelf(List<DBObject> rows){
-		tableObjects.removeAll(rows);
-		for(String indexName : indices.keySet()){
-			TableIndex<DBTypes> index=indices.get(indexName);
-			for(DBObject row : rows){
-				index.remove(row.getField(indexName), row);
-			}
-		}
+		if( isUpdatable )
+			return database.getTable(quary.getTableName1()).delete(whereClause);
+		return false;
 	}
 	
 	public void DBTableGet()

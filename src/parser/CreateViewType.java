@@ -63,7 +63,7 @@ public class CreateViewType extends ParserTypes {
 
 	@Override
 	public String action(Database database) {
-		database.addTables(viewName, new DBView(this, database));
+		database.addTables(viewName, new DBView(this, database, Quary));
 		return "VIEW CREATED";
 	}
 
