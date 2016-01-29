@@ -9,6 +9,14 @@ public class ConditionCalc {
 	public static final int TYPE_VARCHAR = 0;
 	public static final int TYPE_INT = 1;
 	
+	private static final int NOT_FUNC=-1;
+	private static final int MAX=1;
+	private static final int MIN=2;
+	private static final int AVG=3;
+	private static final int SUM=4;
+	private static final int COUNT=5;
+
+	
 	private DBObject mydb;
 	private DBObject mydb2;
 	private boolean tables;	//more than one table then is true
@@ -64,6 +72,26 @@ public class ConditionCalc {
 		if(tuple.startsWith("NOT"))
 			return !(calculate(tuple.substring(3,tuple.length())));
 		// if we reach this point this means the tuple_condition starts with COL_NAME
+		int func = NOT_FUNC;
+		if(tuple.startsWith("MAX"))
+			func = MAX;
+		if(tuple.startsWith("MIN"))
+			func = MIN;
+		if(tuple.startsWith("AVG"))
+			func = AVG;
+		if(tuple.startsWith("SUM"))
+			func = SUM;
+		if(tuple.startsWith("COUNT"))
+			func = COUNT;
+		if(func!=NOT_FUNC)
+		{
+			int i = tuple.indexOf("(");
+			int j = tuple.indexOf(")");
+			tuple = tuple.substring(i+1, j);
+			System.err.print(tuple);
+		}
+		
+		
 		int i=0;
 		int j=0;
 		while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i))))
@@ -84,7 +112,7 @@ public class ConditionCalc {
 			type = getType(ColName, (table_name.equals(table_name1)?1:2));
 		String sub = Clean(tuple.substring(i,tuple.length()));
 		if(type == TYPE_VARCHAR){
-			String value = getStrValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2));
+			String value = getStrValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2), func);
 			//System.err.println(value);
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
 				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) <= 0;
@@ -99,7 +127,7 @@ public class ConditionCalc {
 				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) == 0;
 		}
 		if(type == TYPE_INT){
-			long value = getIntValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2));
+			long value = getIntValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2), func);
 			sub = Clean(sub);
 			if(sub.startsWith("<=") || sub.startsWith("=<"))
 				return (value <= IntCompVal(sub.substring(2, sub.length())));
@@ -143,6 +171,26 @@ public class ConditionCalc {
 			return InStrCompVal(sub1, sub2);
 		}
 		// if we reach this point this means the (int)compare starts with a field
+		int func = NOT_FUNC;
+		if(str.startsWith("MAX"))
+			func = MAX;
+		if(str.startsWith("MIN"))
+			func = MIN;
+		if(str.startsWith("AVG"))
+			func = AVG;
+		if(str.startsWith("SUM"))
+			func = SUM;
+		if(str.startsWith("COUNT"))
+			func = COUNT;
+		
+		if(func!=NOT_FUNC)
+		{
+			int i = str.indexOf("(");
+			int j = str.indexOf(")");
+			str = str.substring(i+1, j);
+			System.err.print(str);
+		}
+		
 		//System.err.println(str+"||\n");
 		int i=0;
 		int j=0;
@@ -159,7 +207,7 @@ public class ConditionCalc {
 			while(i<str.length() && (is_letter(str.charAt(i)) ||  is_digit(str.charAt(i) ) ) )
 				i++;
 		}
-		String value = getStrValue(str.substring(j,i), ((tables==false||table_name.equals(table_name1))?1:2));
+		String value = getStrValue(str.substring(j,i), ((tables==false||table_name.equals(table_name1))?1:2), func);
 		if(i==str.length())
 			return value;
 		if(i!=0)
@@ -195,6 +243,26 @@ public class ConditionCalc {
 		if(i!=0)
 			return inIntCompVal(sign * numb, comp.substring(i, comp.length()));
 		// if we reach this point this means the (int)compare starts with a field
+		int func = NOT_FUNC;
+		if(comp.startsWith("MAX"))
+			func = MAX;
+		if(comp.startsWith("MIN"))
+			func = MIN;
+		if(comp.startsWith("AVG"))
+			func = AVG;
+		if(comp.startsWith("SUM"))
+			func = SUM;
+		if(comp.startsWith("COUNT"))
+			func = COUNT;
+		
+		if(func!=NOT_FUNC)
+		{
+			int s = comp.indexOf("(");
+			int j = comp.indexOf(")");
+			comp = comp.substring(s+1, j);
+			System.err.print(comp);
+		}
+		
 		// i == 0
 		int j=0;
 		while(i<comp.length() && (is_letter(comp.charAt(i)) ||  is_digit(comp.charAt(i) ) ) )
@@ -208,7 +276,7 @@ public class ConditionCalc {
 				i++;
 		}
 		//System.err.println(table_name+" "+table_name1+" "+table_name2);
-		long value = getIntValue(comp.substring(j,i), ((tables==false||table_name.equals(table_name1))?1:2) );
+		long value = getIntValue(comp.substring(j,i), ((tables==false||table_name.equals(table_name1))?1:2) , func);
 		if(i==comp.length())
 			return value;
 		if(i!=0)
@@ -261,20 +329,32 @@ public class ConditionCalc {
 	}
 //////////////////////////////////////////////////////////////////////////	
 	
-	private  long getIntValue(String a, int table){
+	private  long getIntValue(String a, int table, int func){
 		//System.err.println(a);
-		if(table == 1)
-			return ((long)myrow.get(a).getValue());
+		if(func == NOT_FUNC)
+			if(table == 1)
+				return ((long)myrow.get(a).getValue());
+			else
+				return ((long)myrow2.get(a).getValue());
 		else
-			return ((long)myrow2.get(a).getValue());
+			if(table==1)
+				return (long)mydb.getField(func_name(func)+"("+a+")").getValue();
+			else
+				return (long)mydb2.getField(func_name(func)+"("+a+")").getValue();
 	}
 	
-	private  String getStrValue(String a, int table){
+	private  String getStrValue(String a, int table, int func){
 		//System.err.println("!!!!!!!!!!"+a+","+table);
-		if(table==1)
-			return (String)myrow.get(a).getValue();
+		if(func == NOT_FUNC)
+			if(table==1)
+				return (String)myrow.get(a).getValue();
+			else
+				return (String)myrow2.get(a).getValue();
 		else
-			return (String)myrow.get(a).getValue();
+			if(table==1)
+				return (String)mydb.getField(func_name(func)+"("+a+")").getValue();
+			else
+				return (String)mydb2.getField(func_name(func)+"("+a+")").getValue();
 	}
 	
 	private  int getType(String a){
@@ -307,4 +387,21 @@ public class ConditionCalc {
 		}
 			
 	}
+	
+	private String func_name(int func){
+		if(func==MAX)
+			return "MAX";
+		if(func==MIN)
+			return "MIN";
+		if(func==AVG)
+			return "AVG";
+		if(func==SUM)
+			return "SUM";
+		if(func==COUNT)
+			return "COUNT";
+		
+		System.err.println("bad func: "+func);
+		return "";
+	}
+	
 }
