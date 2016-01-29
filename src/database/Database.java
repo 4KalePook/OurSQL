@@ -100,10 +100,12 @@ public class Database {
 								}
 							}
 						}
+						groups.put(groupName, group);
 					}
 				//	System.err.println("!@#$");
 					rows=new LinkedList<DBObject>();
 					for(DBObject group:groups.values()){
+						System.err.println("!@#$!@#$!@#@$");
 						ConditionCalc calc=new ConditionCalc(group, group, tableName1, tableName2);
 						if(calc.calculate(havingClause)){
 							rows.add(group);
