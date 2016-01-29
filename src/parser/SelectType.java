@@ -130,6 +130,7 @@ public class SelectType extends ParserTypes {
 					retObj.insertField(key, obj.getField(key));
 				}
 			}
+			rowsret.add(retObj);
 		}
 		return rowsret;
 	}
