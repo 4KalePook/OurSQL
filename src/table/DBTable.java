@@ -157,6 +157,7 @@ public class DBTable {
 	}
 
 	public List<DBObject> selectRows(String whereClause){
+		System.err.println("khar");
 		List<DBObject> result = new LinkedList<DBObject>();
 		
 
@@ -182,6 +183,7 @@ public class DBTable {
 				
 			}
 		}
+		System.err.println("halate 5");
 		return result;
 	}
 	public DBObject join(DBObject row1, DBObject row2, String Name1, String Name2, boolean isjoin){
@@ -195,11 +197,14 @@ public class DBTable {
 			return ret;
 	}
 	public List<DBObject> selectRows(String Name1,String Name2,DBTable table2, String whereClause,boolean isjoin){
+		System.err.println("gav");
 		if(Name2.equals("")){
+			System.err.println("hala1");
 			return selectRows(whereClause);
 		}
 		long mind=inf+2;
 		if(!isjoin){
+			System.err.println("sdfds");
 			List<DBObject> result = new LinkedList<DBObject>();
 			
 			List<DBObject> rows1=getTableObjects();
@@ -215,7 +220,7 @@ public class DBTable {
 					break;
 				}
 			}
-			
+			System.err.println("sdg");
 			List<DBObject> rows2=table2.getTableObjects();
 			mind=inf+2;
 			for(String key: table2.getIndices().keySet()){
@@ -231,7 +236,7 @@ public class DBTable {
 			}
 			
 			
-			
+			System.err.println("shfs");
 			for(DBObject row1 : rows1){	//TODO make sure this is the correct order for the result
 				
 				for(DBObject row2 : rows2){	//TODO make sure this is the correct order for the result
@@ -246,11 +251,12 @@ public class DBTable {
 				}
 				
 			}
-			
+			System.err.println("hala4");
 			return result;
 		}else{
 			
 			if(fkTables.get(Name2)==null){
+				System.err.println("hala2");
 				return table2.selectRows(Name2,Name1,this,whereClause,isjoin);
 			}
 			
@@ -292,6 +298,7 @@ public class DBTable {
 				}
 				
 			}
+			System.err.println("hala3");
 			return result;
 		}
 	}
