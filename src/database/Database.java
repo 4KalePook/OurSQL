@@ -53,14 +53,14 @@ public class Database {
 				if(!groupBy.isEmpty()){
 					HashMap <List<DBTypes>,DBObject> groups;
 					groups=new HashMap<List<DBTypes>, DBObject>();
-					
+					HashMap<String,Boolean> isGrouped= new HashMap<String, Boolean>();
 			//		System.err.println("HIIII");
 					for(DBObject obj: rows){
 						DBObject group=null;
 						List<DBTypes> groupName=new LinkedList<DBTypes>();
 						for(String str:groupBy){
 							groupName.add(obj.getField(str));
-							obj.DeleteField(str);
+							isGrouped.put(str, true);
 						}
 						if(groups.containsKey(groupName)){
 							group=groups.get(groupName);
@@ -74,7 +74,8 @@ public class Database {
 						}
 					//	System.err.println("test");
 						for(String col:obj.getDataSet().keySet()){
-							
+							if(isGrouped.containsKey(col))
+								continue;
 							if(newGroup){
 								DBTypes val = obj.getField(col);
 								group.insertField("MIN("+col+")", val);
