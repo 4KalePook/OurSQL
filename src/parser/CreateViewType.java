@@ -33,7 +33,7 @@ public class CreateViewType extends ParserTypes {
 	}
 
 	public String getTableName() {
-		return null;
+		return viewName;
 	}
 
 	public Vector<DBTypes> getTypes() {

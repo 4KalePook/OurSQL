@@ -21,6 +21,7 @@ import dbTypes.VARCHAR;
 import errors.C1Constraint;
 import errors.C2Constraint;
 import errors.Constraint;
+import errors.VIEWConstraint;
 import parser.ConditionCalc;
 import parser.ConditionSegCalc;
 import parser.CreateTableType;
@@ -167,6 +168,8 @@ public class DBView extends DBTable {
 			}
 			parent.insertRow(parentValues);
 		}
+		else
+			throw new VIEWConstraint(createView.getTableName());
 	}
 	
 	public void DBTableGet()

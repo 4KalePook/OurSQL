@@ -168,7 +168,10 @@ public class Database {
 				}
 				if(!first)
 					System.out.print(',');
-				System.out.print(value.getValue().toString());
+				if(value == null)
+					System.out.print("NULL");
+				else
+					System.out.print(value.getValue().toString());
 				first=false;
 			}
 			System.out.println();
