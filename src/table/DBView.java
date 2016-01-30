@@ -178,7 +178,7 @@ public class DBView extends DBTable {
 	}
 	public List<DBTypes> getColumnTypes(){
 		DBTable parent = database.getTable(quary.getTableName1());
-		return parent.createTable.getTypes();
+		return createView.getTypes();
 	}
 	
 	public HashMap<String,DBTypes> getSchema(){
