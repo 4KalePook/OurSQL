@@ -44,11 +44,8 @@ public class Database {
 				if(!tableName2.equals("")){
 						table2=tables.get(tableName2);
 				}
-				System.err.println(table1==null);
-				System.err.println("RAFT TOO");
+
 				List<DBObject> rows=table1.selectRows(tableName1,tableName2,table2,whereClause,isjoin);
-				System.err.println("OOMAD BIROON");
-				System.err.println(rows == null);
 				if(rows.isEmpty()){
 					return new LinkedList<DBObject>();    
 				}
