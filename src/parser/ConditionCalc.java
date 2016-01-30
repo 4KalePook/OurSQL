@@ -46,7 +46,7 @@ public class ConditionCalc {
 	
 	public boolean calculate(String tuple){//Calculate Tuple Condition
 		tuple = Clean(tuple);
-//		System.err.println("!!"+tuple);
+		//System.err.println("!!"+tuple);
 		if(tuple.equals("FALSE"))
 			return false;
 		if(tuple.equals("TRUE"))
@@ -72,7 +72,10 @@ public class ConditionCalc {
 		if(tuple.startsWith("NOT"))
 			return !(calculate(tuple.substring(3,tuple.length())));
 		// if we reach this point this means the tuple_condition starts with COL_NAME
+		
+		
 		int func = NOT_FUNC;
+		//System.err.println("%%%"+tuple);
 		if(tuple.startsWith("MAX"))
 			func = MAX;
 		if(tuple.startsWith("MIN"))
@@ -83,12 +86,14 @@ public class ConditionCalc {
 			func = SUM;
 		if(tuple.startsWith("COUNT"))
 			func = COUNT;
+		
 		if(func!=NOT_FUNC)
 		{
 			int i = tuple.indexOf("(");
 			int j = tuple.indexOf(")");
-			tuple = tuple.substring(i+1, j);
-			System.err.print(tuple);
+
+			tuple = tuple.substring(i+1, j)+tuple.substring(j+1, tuple.length());
+			//System.err.print(tuple);
 		}
 		
 		
@@ -97,6 +102,7 @@ public class ConditionCalc {
 		while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i))))
 			i++;
 		String table_name=table_name1;
+		//System.err.println("@%&^%&^%@&"+tuple+j+i);
 		if(i<tuple.length() && tuple.charAt(i)=='.'){
 			table_name = tuple.substring(0,i);
 			j=i+1;
@@ -107,13 +113,14 @@ public class ConditionCalc {
 		String ColName = tuple.substring(j,i);
 		int type;
 		if(tables == false)
-			type = getType(ColName);
+			type = getType(ColName, func);
 		else
-			type = getType(ColName, (table_name.equals(table_name1)?1:2));
+			type = getType(ColName, (table_name.equals(table_name1)?1:2), func);
 		String sub = Clean(tuple.substring(i,tuple.length()));
+		
 		if(type == TYPE_VARCHAR){
 			String value = getStrValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2), func);
-			//System.err.println(value);
+			
 			if(sub.startsWith("<=") || sub.startsWith("=<") ){
 				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) <= 0;
 			}
@@ -127,6 +134,7 @@ public class ConditionCalc {
 				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) == 0;
 		}
 		if(type == TYPE_INT){
+			//System.err.println("{}{}{}{}{}"+sub);
 			long value = getIntValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2), func);
 			sub = Clean(sub);
 			if(sub.startsWith("<=") || sub.startsWith("=<"))
@@ -187,8 +195,8 @@ public class ConditionCalc {
 		{
 			int i = str.indexOf("(");
 			int j = str.indexOf(")");
-			str = str.substring(i+1, j);
-			System.err.print(str);
+			str = str.substring(i+1, j)+str.substring(j+1, str.length());
+			//System.err.print(str);
 		}
 		
 		//System.err.println(str+"||\n");
@@ -259,8 +267,8 @@ public class ConditionCalc {
 		{
 			int s = comp.indexOf("(");
 			int j = comp.indexOf(")");
-			comp = comp.substring(s+1, j);
-			System.err.print(comp);
+			comp = comp.substring(s+1, j)+comp.substring(j+1, comp.length());
+			//System.err.print(comp);
 		}
 		
 		// i == 0
@@ -357,35 +365,54 @@ public class ConditionCalc {
 				return (String)mydb2.getField(func_name(func)+"("+a+")").getValue();
 	}
 	
-	private  int getType(String a){
+	private  int getType(String a, int func){
 		//System.err.println(a);
-		if(!myrow.containsKey(a))
-			System.err.println(a+" isn't in hash map");
-		if(myrow.get(a).getClass().equals(VARCHAR.class))
-			return TYPE_VARCHAR;
-		else
-			return TYPE_INT;
-			
-	}
-	
-	private  int getType(String a, int table){
-
-		if(table == 1){
+		if(func==NOT_FUNC){
 			if(!myrow.containsKey(a))
 				System.err.println(a+" isn't in hash map");
 			if(myrow.get(a).getClass().equals(VARCHAR.class))
-			return TYPE_VARCHAR;
-		else
-			return TYPE_INT;
+				return TYPE_VARCHAR;
+			else
+				return TYPE_INT;
 		}else{
-			if(!myrow2.containsKey(a))
-				System.err.println(a+" isn't in hash map");
-			if(myrow2.get(a).getClass().equals(VARCHAR.class))
+			//System.err.println("@@@"+func_name(func)+"("+a+")"+"@@@");
+			if(mydb.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
 				return TYPE_VARCHAR;
 			else
 				return TYPE_INT;
 		}
 			
+	}
+	
+	private  int getType(String a, int table, int func){
+		if(func==NOT_FUNC)
+			if(table == 1){
+				if(!myrow.containsKey(a))
+					System.err.println("~!"+a+" isn't in hash map");
+				if(myrow.get(a).getClass().equals(VARCHAR.class))
+				return TYPE_VARCHAR;
+			else
+				return TYPE_INT;
+			}else{
+				if(!myrow2.containsKey(a))
+					System.err.println(a+" isn't in hash map");
+				if(myrow2.get(a).getClass().equals(VARCHAR.class))
+					return TYPE_VARCHAR;
+				else
+					return TYPE_INT;
+			}
+		else
+			if(table == 1){
+				if(mydb.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
+					return TYPE_VARCHAR;
+			else
+				return TYPE_INT;
+			}else{
+				if(mydb2.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
+					return TYPE_VARCHAR;
+				else
+					return TYPE_INT;
+			}
 	}
 	
 	private String func_name(int func){
