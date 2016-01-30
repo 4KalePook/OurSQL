@@ -1,6 +1,7 @@
 package parser;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Vector;
 
@@ -17,13 +18,18 @@ public class CreateViewType extends ParserTypes {
 	String viewName;
 	String sQuary;
 	SelectType Quary;
+	Vector<DBTypes> types;
+	HashMap<String, Integer> schema;
+	Vector<String> names;
+	String PK;
+
 	
 	public Vector<ForeignKey> getFKs() {
 		return null;
 	}
 	
 	public String getPK() {
-		return null;
+		return PK;
 	}
 
 	public String getTableName() {
@@ -31,20 +37,24 @@ public class CreateViewType extends ParserTypes {
 	}
 
 	public Vector<DBTypes> getTypes() {
-		return null;
+		return types;
 	}
 
 	public Vector<String> getNames() {
-		return null;
+		return names ;
 	}
 
 	public HashMap<String, Integer> getSchema() {
-		return null;
+		return schema;
 	}
 
 	public CreateViewType() {
 		this.commandType = CommandTypes.CREATE_VIEW;
 		Quary=new SelectType();
+		schema = new HashMap<>();
+		types = new Vector<DBTypes>();
+		names = new Vector<String>();
+
 	}
 
 	@Override
@@ -63,6 +73,17 @@ public class CreateViewType extends ParserTypes {
 
 	@Override
 	public String action(Database database) {
+		DBTable table=database.getTable(Quary.getTableName1());
+		for(String name: Quary.getFullNames())
+			names.add(name);
+		for(String name: getNames())
+		{
+			types.add(table.getSchema().get(name));
+			schema.put(name, types.size()-1);
+			if(table.getPrimaryKey().equals(name))
+				PK = name;
+		}
+		
 		database.addTables(viewName, new DBView(this, database, Quary));
 		return "VIEW CREATED";
 	}

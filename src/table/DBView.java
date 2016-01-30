@@ -139,6 +139,8 @@ public class DBView extends DBTable {
 	
 	public void insertRow(List<DBTypes> values) throws Constraint {
 		// TODO: check if we need to check whereClause
+		System.err.println("isUpdatabale:");
+		System.err.println(isUpdatable);
 		if( isUpdatable ) {
 			HashMap<String, DBTypes> valueMap = new HashMap<String, DBTypes>();
 			for(int i=0; i<values.size(); i++)
@@ -172,7 +174,8 @@ public class DBView extends DBTable {
 		;
 	}
 	public List<DBTypes> getColumnTypes(){
-		return createTable.getTypes();
+		DBTable parent = database.getTable(quary.getTableName1());
+		return parent.createTable.getTypes();
 	}
 	
 	public HashMap<String,DBTypes> getSchema(){
