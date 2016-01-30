@@ -92,10 +92,10 @@ public class DBView extends DBTable {
 	}
 	
 	
-	public List<DBObject> selectRows(String Name1,String Name2,DBTable table2, String whereClause,boolean isjoin){
-		//TODO Create a Virtual table and then pass the quarry
-		return null;
-	}
+//	public List<DBObject> selectRows(String Name1,String Name2,DBTable table2, String whereClause,boolean isjoin){
+//		//TODO Create a Virtual table and then pass the quarry
+//		return null;
+//	}
 	
 	
 	public void updateAllIndex(String indexName, DBTypes oldVal, DBTypes newVal){

@@ -215,7 +215,6 @@ public class DBTable {
 					break;
 				}
 			}
-			
 			List<DBObject> rows2=table2.getTableObjects();
 			mind=inf+2;
 			for(String key: table2.getIndices().keySet()){
@@ -229,7 +228,6 @@ public class DBTable {
 						break;
 					}
 			}
-			
 			
 			
 			for(DBObject row1 : rows1){	//TODO make sure this is the correct order for the result
@@ -246,7 +244,6 @@ public class DBTable {
 				}
 				
 			}
-			
 			return result;
 		}else{
 			
