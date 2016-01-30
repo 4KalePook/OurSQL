@@ -107,6 +107,7 @@ public class Database {
 					for(DBObject group:groups.values()){
 						System.err.println("!@#$!@#$!@#@$");
 						ConditionCalc calc=new ConditionCalc(group, group, tableName1, tableName2);
+						System.err.println(havingClause);
 						if(calc.calculate(havingClause)){
 							rows.add(group);
 						}
