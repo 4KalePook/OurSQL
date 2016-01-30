@@ -44,6 +44,7 @@ public class Database {
 				if(!tableName2.equals("")){
 						table2=tables.get(tableName2);
 				}
+
 				List<DBObject> rows=table1.selectRows(tableName1,tableName2,table2,whereClause,isjoin);
 				if(rows.isEmpty()){
 					return new LinkedList<DBObject>();    
