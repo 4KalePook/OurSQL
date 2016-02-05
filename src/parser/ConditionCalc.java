@@ -95,60 +95,108 @@ public class ConditionCalc {
 			tuple = tuple.substring(i+1, j)+tuple.substring(j+1, tuple.length());
 			//System.err.print(tuple);
 		}
-		
-		
-		int i=0;
-		int j=0;
-		while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i))))
-			i++;
-		String table_name=table_name1;
-		//System.err.println("@%&^%&^%@&"+tuple+j+i);
-		if(i<tuple.length() && tuple.charAt(i)=='.'){
-			table_name = tuple.substring(0,i);
-			j=i+1;
-			i++;
+		tuple =Clean(tuple);
+		if(is_letter(tuple.charAt(0))){
+			int i=0;
+			int j=0;
 			while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i))))
 				i++;
-		}
-		String ColName = tuple.substring(j,i);
-		int type;
-		if(tables == false)
-			type = getType(ColName, func);
-		else
-			type = getType(ColName, (table_name.equals(table_name1)?1:2), func);
-		String sub = Clean(tuple.substring(i,tuple.length()));
-		
-		if(type == TYPE_VARCHAR){
-			String value = getStrValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2), func);
-			
-			if(sub.startsWith("<=") || sub.startsWith("=<") ){
-				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) <= 0;
+			String table_name=table_name1;
+			//System.err.println("@%&^%&^%@&"+tuple+j+i);
+			if(i<tuple.length() && tuple.charAt(i)=='.'){
+				table_name = tuple.substring(0,i);
+				j=i+1;
+				i++;
+				while(i<tuple.length() && (is_letter(tuple.charAt(i)) ||  is_digit(tuple.charAt(i))))
+					i++;
 			}
-			if(sub.startsWith(">=") || sub.startsWith("=>") )
-				return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) >= 0;
-			if(sub.startsWith("<") )
-				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) <  0;				
-			if(sub.startsWith(">") )
-				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) >  0;
-			if(sub.startsWith("="))
-				return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) == 0;
-		}
-		if(type == TYPE_INT){
-			//System.err.println("{}{}{}{}{}"+sub);
-			long value = getIntValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2), func);
-			sub = Clean(sub);
-			if(sub.startsWith("<=") || sub.startsWith("=<"))
-				return (value <= IntCompVal(sub.substring(2, sub.length())));
-			if(sub.startsWith(">=") || sub.startsWith("=>"))
-				return (value >= IntCompVal(sub.substring(2, sub.length())));
-			if(sub.startsWith(">") )
-				return (value > IntCompVal(sub.substring(1, sub.length())));
-			if(sub.startsWith("<"))
-				return (value < IntCompVal(sub.substring(1, sub.length())));
-			if(sub.startsWith("="))
-				return (value == IntCompVal(sub.substring(1, sub.length())));
+			String ColName = tuple.substring(j,i);
+			int type;
+			if(tables == false)
+				type = getType(ColName, func);
+			else
+				type = getType(ColName, (table_name.equals(table_name1)?1:2), func);
+			String sub = Clean(tuple.substring(i,tuple.length()));
+			
+			if(type == TYPE_VARCHAR){
+				String value = getStrValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2), func);
+				
+				if(sub.startsWith("<=") || sub.startsWith("=<") ){
+					return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) <= 0;
+				}
+				if(sub.startsWith(">=") || sub.startsWith("=>") )
+					return value.compareTo(StrCompVal(sub.substring(2, sub.length() ) )) >= 0;
+				if(sub.startsWith("<") )
+					return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) <  0;				
+				if(sub.startsWith(">") )
+					return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) >  0;
+				if(sub.startsWith("="))
+					return value.compareTo(StrCompVal(sub.substring(1, sub.length() ) )) == 0;
+			}
+			if(type == TYPE_INT){
+				//System.err.println("{}{}{}{}{}"+sub);
+				long value = getIntValue(ColName, ((tables==false||table_name.equals(table_name1))?1:2), func);
+				sub = Clean(sub);
+				if(sub.startsWith("<=") || sub.startsWith("=<"))
+					return (value <= IntCompVal(sub.substring(2, sub.length())));
+				if(sub.startsWith(">=") || sub.startsWith("=>"))
+					return (value >= IntCompVal(sub.substring(2, sub.length())));
+				if(sub.startsWith(">") )
+					return (value > IntCompVal(sub.substring(1, sub.length())));
+				if(sub.startsWith("<"))
+					return (value < IntCompVal(sub.substring(1, sub.length())));
+				if(sub.startsWith("="))
+					return (value == IntCompVal(sub.substring(1, sub.length())));
+			}
 		}
 		//if we reach this point this means the string isn't a standard tuple condition
+		if(tuple.charAt(0)=='"'){
+			if(tuple.contains("<=")){
+				int l = tuple.lastIndexOf("<=");
+				return StrCompVal(tuple.substring(0,l)).compareTo(  StrCompVal(tuple.substring(l+2,tuple.length())))<=0;
+			}
+			if(tuple.contains(">=")){
+				int l = tuple.lastIndexOf(">=");
+				return StrCompVal(tuple.substring(0,l)).compareTo(  StrCompVal(tuple.substring(l+2,tuple.length())))>=0;
+			}
+			if(tuple.contains("<")){
+				int l = tuple.lastIndexOf("<");
+				return StrCompVal(tuple.substring(0,l)).compareTo(  StrCompVal(tuple.substring(l+1,tuple.length())))<0;
+			}
+			if(tuple.contains(">")){
+				int l = tuple.lastIndexOf(">");
+				return StrCompVal(tuple.substring(0,l)).compareTo(  StrCompVal(tuple.substring(l+1,tuple.length())))>0;
+			}
+			if(tuple.contains("=")){
+				int l = tuple.lastIndexOf("=");
+				return StrCompVal(tuple.substring(0,l)).compareTo(  StrCompVal(tuple.substring(l+1,tuple.length())))==0;
+			}
+
+				
+		}
+		if(is_digit(tuple.charAt(0))){
+			if(tuple.contains("<=")){
+				int l = tuple.lastIndexOf("<=");
+				return IntCompVal(tuple.substring(0,l))<=IntCompVal(tuple.substring(l+2,tuple.length()));
+			}
+			if(tuple.contains(">=")){
+				int l = tuple.lastIndexOf(">=");
+				return IntCompVal(tuple.substring(0,l))>=IntCompVal(tuple.substring(l+2,tuple.length()));
+			}
+			if(tuple.contains("<")){
+				int l = tuple.lastIndexOf("<");
+				return IntCompVal(tuple.substring(0,l))<IntCompVal(tuple.substring(l+2,tuple.length()));
+			}
+			if(tuple.contains(">")){
+				int l = tuple.lastIndexOf(">");
+				return IntCompVal(tuple.substring(0,l))>IntCompVal(tuple.substring(l+2,tuple.length()));
+			}
+			if(tuple.contains("=")){
+				int l = tuple.lastIndexOf("=");
+				return IntCompVal(tuple.substring(0,l))==IntCompVal(tuple.substring(l+2,tuple.length()));
+			}
+		}
+		
 		System.err.println("(Err)Not a standard Tupple Condition\n <"+tuple+">");
 		return false;
 	}
