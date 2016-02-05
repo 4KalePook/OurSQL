@@ -97,6 +97,7 @@ public class SelectType extends ParserTypes {
 		scanner.close();
 		if(gind!= cend){
 			scanner = new Scanner(command.substring(gind,hind));
+			scanner.useDelimiter(ParseCommand.DELIMS);
 			scanner.next(); //Group
 			scanner.next(); //By
 			while(scanner.hasNext()){
