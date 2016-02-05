@@ -73,7 +73,7 @@ public class Database {
 							groupName.add(obj.getField(str));
 							isGrouped.put(str, true);
 						}
-						if(groups.containsKey(groupName)){
+						if(groups.containsKey(conc(groupName))){
 							group=groups.get(conc(groupName));
 						}
 						boolean newGroup;
@@ -120,9 +120,9 @@ public class Database {
 					rows=new LinkedList<DBObject>();
 					for(DBObject group:groups.values()){
 						System.err.println("!@#$!@#$!@#@$");
-					//	for(String str:group.getDataSet().keySet()){
-					//		System.err.println(str+ " " + group.getField(str));
-					//	}
+						for(String str:group.getDataSet().keySet()){
+							System.err.println(str+ " " + group.getField(str).getValue());
+						}
 						ConditionCalc calc=new ConditionCalc(group, group, tableName1, tableName2);
 						System.err.println(havingClause);
 						if(calc.calculate(havingClause)){
