@@ -450,6 +450,7 @@ public class ConditionCalc {
 			}
 		else
 			if(table == 1){
+				System.err.println(func_name(func)+"("+a+")");
 				if(mydb.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
 					return TYPE_VARCHAR;
 			else
