@@ -59,6 +59,7 @@ public class Database {
 						DBObject group=null;
 						List<DBTypes> groupName=new LinkedList<DBTypes>();
 						for(String str:groupBy){
+							System.err.println("! str: " + str + " val: "+ obj.getField(str) );
 							groupName.add(obj.getField(str));
 							isGrouped.put(str, true);
 						}
@@ -108,6 +109,9 @@ public class Database {
 					rows=new LinkedList<DBObject>();
 					for(DBObject group:groups.values()){
 						System.err.println("!@#$!@#$!@#@$");
+						for(String str:group.getDataSet().keySet()){
+							System.err.println(str+ " " + group.getField(str));
+						}
 						ConditionCalc calc=new ConditionCalc(group, group, tableName1, tableName2);
 						System.err.println(havingClause);
 						if(calc.calculate(havingClause)){
