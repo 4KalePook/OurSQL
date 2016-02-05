@@ -393,9 +393,15 @@ public class ConditionCalc {
 				return ((long)myrow2.get(a).getValue());
 		else
 			if(table==1)
-				return (long)mydb.getField(func_name(func)+"("+a+")").getValue();
+				if(mydb.getField(func_name(func)+"("+a+")")!=null)
+					return (long)mydb.getField(func_name(func)+"("+a+")").getValue();
+				else
+					return (long)mydb.getField(func_name(func)+"("+table_name1+"."+a+")").getValue();
 			else
-				return (long)mydb2.getField(func_name(func)+"("+a+")").getValue();
+				if(mydb2.getField(func_name(func)+"("+a+")")!=null)
+					return (long)mydb2.getField(func_name(func)+"("+a+")").getValue();
+				else
+					return (long)mydb2.getField(func_name(func)+"("+table_name2+"."+a+")").getValue();
 	}
 	
 	private  String getStrValue(String a, int table, int func){
@@ -405,11 +411,18 @@ public class ConditionCalc {
 				return (String)myrow.get(a).getValue();
 			else
 				return (String)myrow2.get(a).getValue();
-		else
+		else{
 			if(table==1)
-				return (String)mydb.getField(func_name(func)+"("+a+")").getValue();
+				if(mydb.getField(func_name(func)+"("+a+")")!=null)
+					return (String)mydb.getField(func_name(func)+"("+a+")").getValue();
+				else
+					return (String)mydb.getField(func_name(func)+"("+table_name1+"."+a+")").getValue();
 			else
-				return (String)mydb2.getField(func_name(func)+"("+a+")").getValue();
+				if(mydb2.getField(func_name(func)+"("+a+")")!=null)
+					return (String)mydb2.getField(func_name(func)+"("+a+")").getValue();
+				else
+					return (String)mydb2.getField(func_name(func)+"("+table_name2+"."+a+")").getValue();
+		}
 	}
 	
 	private  int getType(String a, int func){
@@ -458,7 +471,7 @@ public class ConditionCalc {
 			}
 		else
 			if(table == 1){
-				if(mydb.getRow().containsValue(func_name(func)+"("+a+")"))
+				if(mydb.getField(func_name(func)+"("+a+")")!=null)
 				//System.err.println("^^^^"+func_name(func)+"("+table_name1+"."+a+")");
 					if(mydb.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
 						return TYPE_VARCHAR;
@@ -472,7 +485,7 @@ public class ConditionCalc {
 						return TYPE_INT;
 				}
 			}else{
-				if(mydb2.getRow().containsValue(func_name(func)+"("+a+")"))
+				if(mydb2.getField(func_name(func)+"("+a+")")!=null)
 					//System.err.println("^^^^"+func_name(func)+"("+table_name1+"."+a+")");
 						if(mydb2.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
 							return TYPE_VARCHAR;
