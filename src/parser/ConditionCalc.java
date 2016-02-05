@@ -434,32 +434,53 @@ public class ConditionCalc {
 	private  int getType(String a, int table, int func){
 		if(func==NOT_FUNC)
 			if(table == 1){
-				if(!myrow.containsKey(a))
-					System.err.println("~!"+a+" isn't in hash map");
-				if(myrow.get(a).getClass().equals(VARCHAR.class))
-				return TYPE_VARCHAR;
-			else
-				return TYPE_INT;
-			}else{
-				if(!myrow2.containsKey(a))
-					System.err.println(a+" isn't in hash map");
-				if(myrow2.get(a).getClass().equals(VARCHAR.class))
-					return TYPE_VARCHAR;
+				if(myrow.containsKey(a))
+					if(myrow.get(a).getClass().equals(VARCHAR.class))
+						return TYPE_VARCHAR;
+					else
+						return TYPE_INT;
 				else
-					return TYPE_INT;
+					if(myrow.get(table_name1+"."+a).getClass().equals(VARCHAR.class))
+						return TYPE_VARCHAR;
+					else
+						return TYPE_INT;
+			}else{
+				if(myrow2.containsKey(a))
+					if(myrow2.get(a).getClass().equals(VARCHAR.class))
+						return TYPE_VARCHAR;
+					else
+						return TYPE_INT;
+				else
+					if(myrow2.get(table_name2+"."+a).getClass().equals(VARCHAR.class))
+						return TYPE_VARCHAR;
+					else
+						return TYPE_INT;
 			}
 		else
 			if(table == 1){
-				System.err.println(func_name(func)+"("+table_name1+"."+a+")");
-				if(mydb.getField(func_name(func)+"("+table_name1+"."+a+")").getClass().equals(VARCHAR.class))
-					return TYPE_VARCHAR;
-			else
-				return TYPE_INT;
-			}else{
-				if(mydb2.getField(func_name(func)+"("+table_name2+"."+a+")").getClass().equals(VARCHAR.class))
-					return TYPE_VARCHAR;
+				if(mydb.getRow().containsValue(func_name(func)+"("+a+")"))
+				//System.err.println("^^^^"+func_name(func)+"("+table_name1+"."+a+")");
+					if(mydb.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
+						return TYPE_VARCHAR;
+					else
+						return TYPE_INT;
 				else
-					return TYPE_INT;
+					if(mydb.getField(func_name(func)+"("+table_name1+"."+a+")").getClass().equals(VARCHAR.class))
+						return TYPE_VARCHAR;
+					else
+						return TYPE_INT;
+			}else{
+				if(mydb2.getRow().containsValue(func_name(func)+"("+a+")"))
+					//System.err.println("^^^^"+func_name(func)+"("+table_name1+"."+a+")");
+						if(mydb2.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
+							return TYPE_VARCHAR;
+						else
+							return TYPE_INT;
+					else
+						if(mydb2.getField(func_name(func)+"("+table_name2+"."+a+")").getClass().equals(VARCHAR.class))
+							return TYPE_VARCHAR;
+						else
+							return TYPE_INT;
 			}
 	}
 	
