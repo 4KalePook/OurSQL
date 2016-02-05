@@ -75,8 +75,8 @@ public class Database {
 						}
 					//	System.err.println("test");
 						for(String col:obj.getDataSet().keySet()){
-							if(isGrouped.containsKey(col))
-								continue;
+//							if(isGrouped.containsKey(col))
+//								continue;
 							if(newGroup){
 								DBTypes val = obj.getField(col);
 								group.insertField("MIN("+col+")", val);
@@ -109,9 +109,9 @@ public class Database {
 					rows=new LinkedList<DBObject>();
 					for(DBObject group:groups.values()){
 						System.err.println("!@#$!@#$!@#@$");
-						for(String str:group.getDataSet().keySet()){
-							System.err.println(str+ " " + group.getField(str));
-						}
+					//	for(String str:group.getDataSet().keySet()){
+					//		System.err.println(str+ " " + group.getField(str));
+					//	}
 						ConditionCalc calc=new ConditionCalc(group, group, tableName1, tableName2);
 						System.err.println(havingClause);
 						if(calc.calculate(havingClause)){
