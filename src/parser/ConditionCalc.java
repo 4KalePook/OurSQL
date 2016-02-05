@@ -22,7 +22,7 @@ public class ConditionCalc {
 	private boolean tables;	//more than one table then is true
 	private HashMap<String, DBTypes> myrow;
 	private HashMap<String, DBTypes> myrow2;
-	private String table_name1;// table_name2;
+	private String table_name1, table_name2;
 	public ConditionCalc(DBObject inputdb){
 		this.mydb = inputdb;
 		tables = false;
@@ -32,7 +32,7 @@ public class ConditionCalc {
 		this.mydb = inputdb;
 		this.mydb2 = inputdb2;
 		this.table_name1 = table_name1;
-		//this.table_name2 = table_name2;
+		this.table_name2 = table_name2;
 		if(this.mydb2==null)
 			tables = false;
 		else{
@@ -450,12 +450,13 @@ public class ConditionCalc {
 			}
 		else
 			if(table == 1){
-				if(mydb.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
+				System.err.println(func_name(func)+"("+table_name1+"."+a+")");
+				if(mydb.getField(func_name(func)+"("+table_name1+"."+a+")").getClass().equals(VARCHAR.class))
 					return TYPE_VARCHAR;
 			else
 				return TYPE_INT;
 			}else{
-				if(mydb2.getField(func_name(func)+"("+a+")").getClass().equals(VARCHAR.class))
+				if(mydb2.getField(func_name(func)+"("+table_name2+"."+a+")").getClass().equals(VARCHAR.class))
 					return TYPE_VARCHAR;
 				else
 					return TYPE_INT;
