@@ -149,7 +149,6 @@ public class ConditionCalc {
 					return (value == IntCompVal(sub.substring(1, sub.length())));
 			}
 		}
-		//if we reach this point this means the string isn't a standard tuple condition
 		if(tuple.charAt(0)=='"'){
 			if(tuple.contains("<=")){
 				int l = tuple.lastIndexOf("<=");
@@ -185,18 +184,18 @@ public class ConditionCalc {
 			}
 			if(tuple.contains("<")){
 				int l = tuple.lastIndexOf("<");
-				return IntCompVal(tuple.substring(0,l))<IntCompVal(tuple.substring(l+2,tuple.length()));
+				return IntCompVal(tuple.substring(0,l))<IntCompVal(tuple.substring(l+1,tuple.length()));
 			}
 			if(tuple.contains(">")){
 				int l = tuple.lastIndexOf(">");
-				return IntCompVal(tuple.substring(0,l))>IntCompVal(tuple.substring(l+2,tuple.length()));
+				return IntCompVal(tuple.substring(0,l))>IntCompVal(tuple.substring(l+1,tuple.length()));
 			}
 			if(tuple.contains("=")){
 				int l = tuple.lastIndexOf("=");
-				return IntCompVal(tuple.substring(0,l))==IntCompVal(tuple.substring(l+2,tuple.length()));
+				return IntCompVal(tuple.substring(0,l))==IntCompVal(tuple.substring(l+1,tuple.length()));
 			}
 		}
-		
+		//if we reach this point this means the string isn't a standard tuple condition		
 		System.err.println("(Err)Not a standard Tupple Condition\n <"+tuple+">");
 		return false;
 	}
