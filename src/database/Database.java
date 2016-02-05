@@ -36,6 +36,16 @@ public class Database {
 	public boolean deleteFrom(String tableName, String whereClause  ){
 		return tables.get(tableName).delete(whereClause);
 	}
+	
+	public String conc(List<DBTypes> groupName){
+		String ret = "";
+
+		for(DBTypes dbt: groupName){
+			ret=ret+(dbt.getValue()+", ");
+		}
+		
+		return ret;
+	}
 	public List<DBObject> selectToRows(String tableName1,String tableName2,List<String> columnNames, String whereClause, boolean isjoin,List<String> groupBy,String havingClause  ){
 		//TODO: optimize with indices
 				DBTable table1 = tables.get(tableName1);
@@ -51,8 +61,8 @@ public class Database {
 				}
 				
 				if(!groupBy.isEmpty()){
-					HashMap <List<DBTypes>,DBObject> groups;
-					groups=new HashMap<List<DBTypes>, DBObject>();
+					HashMap <String,DBObject> groups;
+					groups=new HashMap<String, DBObject>();
 					HashMap<String,Boolean> isGrouped= new HashMap<String, Boolean>();
 			//		System.err.println("HIIII");
 					for(DBObject obj: rows){
@@ -64,7 +74,7 @@ public class Database {
 							isGrouped.put(str, true);
 						}
 						if(groups.containsKey(groupName)){
-							group=groups.get(groupName);
+							group=groups.get(conc(groupName));
 						}
 						boolean newGroup;
 						if(group==null){
@@ -103,7 +113,8 @@ public class Database {
 								}
 							}
 						}
-						groups.put(groupName, group);
+						System.err.println(".");
+						groups.put(conc(groupName), group);
 					}
 				//	System.err.println("!@#$");
 					rows=new LinkedList<DBObject>();
